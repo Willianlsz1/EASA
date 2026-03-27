@@ -21,6 +21,10 @@ const PAGE_TITLES = {
   'flashcards':   '🃏 Flashcards',
   'quiz':         '📝 Quiz',
   'updates':      '📋 Atualizações',
+  'kirchhoff':    'Kirchhoff & Thévenin · Norton',
+  'tiristor':     'Tiristores · SCR · DIAC · TRIAC',
+  'amp':          'Amplificadores Operacionais · Op-Amp',
+  'filtros':      'Filtros RC Passivos',
 };
 
 /* ── FLASHCARDS ──────────────────────────────────────────── */
@@ -117,6 +121,101 @@ const FLASHCARDS = [
     a: '0',
     s: 'NAND = NOT(A AND B). AND(1,1) = 1 → NOT(1) = 0.',
   },
+
+  // ── Kirchhoff & Thévenin ────────────────────────────
+  {
+    q: 'O que diz a 1ª Lei de Kirchhoff (LCK)?',
+    a: 'Soma das correntes em um nó = 0',
+    s: 'Correntes que entram = correntes que saem. Conservação de carga elétrica no nó.',
+  },
+  {
+    q: 'O que diz a 2ª Lei de Kirchhoff (LTK)?',
+    a: 'Soma das tensões em uma malha fechada = 0',
+    s: 'Percorra a malha em qualquer sentido: ΣV = 0. Conservação de energia.',
+  },
+  {
+    q: 'Como calcular Vth no Teorema de Thévenin?',
+    a: 'Tensão em circuito aberto nos terminais A–B (sem carga)',
+    s: 'Retire a carga, calcule a tensão entre os terminais A e B. Essa é a Vth.',
+  },
+  {
+    q: 'Como calcular Rth no Teorema de Thévenin?',
+    a: 'Zerar fontes e calcular resistência vista dos terminais A–B',
+    s: 'Fontes de tensão → curto. Fontes de corrente → circuito aberto. Calcule R equivalente.',
+  },
+  {
+    q: 'Qual a relação entre Norton e Thévenin?',
+    a: 'In = Vth / Rth e Rn = Rth',
+    s: 'Os dois representam o mesmo circuito. Thévenin = série. Norton = paralelo. Rn = Rth sempre.',
+  },
+  // ── Tiristores ──────────────────────────────────────
+  {
+    q: 'O que é um SCR e como ele é disparado?',
+    a: 'Diodo controlado — dispara com pulso positivo no gate (G) e VAK > 0',
+    s: 'SCR = Silicon Controlled Rectifier. Unidirecional. Continua ligado mesmo sem gate. Desliga só quando corrente < IH.',
+  },
+  {
+    q: 'Qual a diferença entre SCR e TRIAC?',
+    a: 'SCR = unidirecional (CC). TRIAC = bidirecional (CA).',
+    s: 'TRIAC equivale a dois SCRs em antiparalelo. Controla corrente nos dois semiciclos da CA.',
+  },
+  {
+    q: 'Para que serve o DIAC?',
+    a: 'Gerar o pulso de disparo do gate do TRIAC',
+    s: 'DIAC conduz nos dois sentidos quando a tensão supera VBO (≈30V). Sem gate. Muito usado em dimmers com TRIAC.',
+  },
+  {
+    q: 'O que é a corrente de holding (IH) de um tiristor?',
+    a: 'Corrente mínima para manter o tiristor em condução',
+    s: 'Se a corrente cair abaixo de IH, o tiristor desliga automaticamente — mesmo com o gate ainda ativado.',
+  },
+  // ── Amplificadores ──────────────────────────────────
+  {
+    q: 'Qual o ganho do amplificador inversor?',
+    a: 'Av = −Rf / Ri (negativo = sinal invertido)',
+    s: 'Exemplo: Rf=10kΩ, Ri=1kΩ → Av = −10. A saída tem amplitude 10x maior e fase invertida.',
+  },
+  {
+    q: 'Qual o ganho do amplificador não-inversor?',
+    a: 'Av = 1 + Rf/R1 (positivo = sinal em fase)',
+    s: 'Exemplo: Rf=9kΩ, R1=1kΩ → Av = 10. Sinal amplificado e em fase com a entrada.',
+  },
+  {
+    q: 'O que é a regra de ouro do op-amp ideal?',
+    a: 'Com realimentação negativa: V+ = V− (curto virtual) e corrente de entrada = 0',
+    s: 'Rin = ∞ → sem corrente nas entradas. O op-amp ajusta Vout para igualar V+ e V−.',
+  },
+  {
+    q: 'Como funciona o op-amp como comparador?',
+    a: 'Sem realimentação: se V+ > V− → Vout = +Vsat; se V+ < V− → Vout = −Vsat',
+    s: 'Opera em malha aberta com ganho enorme. A saída é binária (alto ou baixo). Detecta limiares.',
+  },
+  {
+    q: 'O que é um buffer (seguidor de tensão) com op-amp?',
+    a: 'Av = 1, Vout = Vin — isola impedâncias sem amplificar',
+    s: 'Saída conectada diretamente à entrada inversora (−). Rin = ∞, Rout ≈ 0. Protege a fonte do sinal.',
+  },
+  // ── Filtros ─────────────────────────────────────────
+  {
+    q: 'Fórmula da frequência de corte de um filtro RC?',
+    a: 'fc = 1 / (2π × R × C)',
+    s: 'Em fc, a tensão cai para 70,7% da entrada (−3 dB). Exemplo: R=10kΩ, C=100nF → fc ≈ 159 Hz.',
+  },
+  {
+    q: 'Qual a diferença entre filtro passa-baixa e passa-alta?',
+    a: 'LPF: R série + C para GND. HPF: C série + R para GND.',
+    s: 'LPF deixa baixas frequências passar (Vout = Vc). HPF deixa altas frequências passar (Vout = VR).',
+  },
+  {
+    q: 'O que acontece com o sinal em fc (−3 dB)?',
+    a: 'A tensão de saída cai para 70,7% de Vin (potência = metade)',
+    s: '−3 dB = fator 0,707 = 1/√2. É o ponto de referência para definir a banda do filtro.',
+  },
+  {
+    q: 'O que é a constante de tempo τ = R × C?',
+    a: 'Tempo para o capacitor carregar a 63,2% de Vfinal',
+    s: 'τ está ligado a fc: fc = 1/(2πτ). Em 5τ o capacitor está praticamente carregado (99,3%).',
+  },
 ];
 
 /* ── QUIZ ────────────────────────────────────────────────── */
@@ -181,6 +280,77 @@ const QUIZ_DATA = [
     ans: 3,
     exp: 'FP = cos(φ). Carga resistiva: defasagem φ = 0° → cos(0°) = 1. FP ideal!',
   },
+
+  // ── Kirchhoff & Thévenin ────────────────────────────
+  {
+    q: 'Num nó, entram I₁=4A e I₂=3A. Qual a corrente que sai?',
+    opts: ['4A', '3A', '7A', '1A'],
+    ans: 2,
+    exp: 'LCK: ΣI_entrada = ΣI_saída → 4+3 = 7A. Lei da conservação de carga.',
+  },
+  {
+    q: 'Numa malha com Vs=12V, VR1=5V, VR2=4V. Qual VR3?',
+    opts: ['12V', '9V', '3V', '21V'],
+    ans: 2,
+    exp: 'LTK: Vs − VR1 − VR2 − VR3 = 0 → 12−5−4−VR3=0 → VR3=3V.',
+  },
+  {
+    q: 'Para calcular Rth (Thévenin), o que fazemos com fontes de tensão independentes?',
+    opts: ['Abrimos o circuito', 'Substituímos por curto-circuito', 'Dobramos seu valor', 'Mantemos como estão'],
+    ans: 1,
+    exp: 'Fontes de tensão → curto-circuito (0V). Fontes de corrente → circuito aberto (0A).',
+  },
+  {
+    q: 'Se Vth = 10V e Rth = 5Ω, qual a corrente de Norton (In)?',
+    opts: ['50A', '2A', '0,5A', '15A'],
+    ans: 1,
+    exp: 'In = Vth / Rth = 10 / 5 = 2A. Rn = Rth = 5Ω. Os dois circuitos são equivalentes.',
+  },
+  // ── Tiristores ──────────────────────────────────────
+  {
+    q: 'Qual tiristor é bidirecional e controla corrente CA?',
+    opts: ['SCR', 'DIAC', 'TRIAC', 'Diodo Zener'],
+    ans: 2,
+    exp: 'TRIAC = 2 SCRs em antiparalelo. Controla CA nos dois semiciclos. Usado em dimmers e motores CA.',
+  },
+  {
+    q: 'O que mantém o SCR em condução após o disparo do gate?',
+    opts: ['Tensão contínua no gate', 'Corrente acima de IH (holding)', 'Temperatura elevada', 'Tensão reversa'],
+    ans: 1,
+    exp: 'Após o disparo, o gate pode ser retirado. O SCR continua ligado enquanto corrente > IH (corrente de holding).',
+  },
+  // ── Amplificadores ──────────────────────────────────
+  {
+    q: 'Amplificador inversor com Rf=47kΩ e Ri=4,7kΩ. Qual o ganho?',
+    opts: ['10', '−10', '47', '0,1'],
+    ans: 1,
+    exp: 'Av = −Rf/Ri = −47k/4,7k = −10. Negativo indica inversão de fase.',
+  },
+  {
+    q: 'Amplificador não-inversor com Rf=8kΩ e R1=2kΩ. Qual o ganho?',
+    opts: ['4', '5', '−4', '0,25'],
+    ans: 1,
+    exp: 'Av = 1 + Rf/R1 = 1 + 8k/2k = 1+4 = 5. Sinal em fase com a entrada.',
+  },
+  {
+    q: 'Qual configuração de op-amp opera em malha aberta e gera saída binária?',
+    opts: ['Buffer', 'Inversor', 'Comparador', 'Integrador'],
+    ans: 2,
+    exp: 'Comparador opera sem realimentação. A saída vai para +Vsat ou −Vsat conforme V+ > V− ou V+ < V−.',
+  },
+  // ── Filtros ─────────────────────────────────────────
+  {
+    q: 'R=1kΩ, C=1µF. Qual a frequência de corte fc?',
+    opts: ['159 Hz', '1000 Hz', '63 Hz', '318 Hz'],
+    ans: 0,
+    exp: 'fc = 1/(2π×1000×0,000001) = 1/(2π×0,001) ≈ 159 Hz. Fórmula: fc = 1/(2πRC).',
+  },
+  {
+    q: 'Em qual configuração RC o capacitor fica em série com a carga (passa-alta)?',
+    opts: ['R em série, C para GND', 'C em série, R para GND', 'R e C em paralelo', 'Sem diferença'],
+    ans: 1,
+    exp: 'HPF: C em série com a entrada, R em paralelo com a saída (para GND). Vout = Tensão em R.',
+  },
 ];
 
 /* ── CHANGELOG / ATUALIZAÇÕES ───────────────────────────── */
@@ -188,6 +358,20 @@ const UPDATES = [
   /* Versões planejadas (mais recentes no topo) */
   {
     version: 'v2.0',
+    title: 'Kirchhoff, Thévenin, Tiristores, Op-Amp & Filtros',
+    date: 'Atual',
+    type: 'live',
+    items: [
+      'Módulo Kirchhoff & Thévenin/Norton: LCK, LTK, cálculo de Vth/Rth, equivalente de Norton',
+      'Módulo Tiristores: SCR, DIAC e TRIAC com diagramas e aplicações industriais',
+      'Módulo Amplificadores Operacionais: inversor, não-inversor, comparador, buffer, CI 741',
+      'Módulo Filtros RC: passa-baixa, passa-alta, passa-banda com gráfico de resposta em frequência',
+      '19 novos flashcards cobrindo todos os módulos adicionados',
+      '11 novas questões de quiz com explicações detalhadas',
+    ],
+  },
+  {
+    version: 'v1.5',
     title: 'Eletromagnetismo & Amplificadores Operacionais',
     date: 'Planejado',
     type: 'planned',
