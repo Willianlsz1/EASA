@@ -3,969 +3,704 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SENAI · EASA v1</title>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <title>SENAI · Portal de Estudos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --bg:        #0a0d11;
+      --bg2:       #111520;
+      --bg3:       #181d2a;
+      --bg4:       #1e2535;
+      --border:    rgba(255,255,255,0.08);
+      --text:      #e2e8f0;
+      --text2:     #94a3b8;
+      --text3:     #475569;
+      --grid:      rgba(0,229,255,0.045);
+      --trans:     0.25s cubic-bezier(.4,0,.2,1);
+      --radius:    14px;
+      --bar-h:     52px;
+
+      --mvf:       #00d4ff;
+      --mvf-dim:   rgba(0,212,255,0.12);
+      --mvf-glow:  0 0 30px rgba(0,212,255,0.20);
+      --easa:      #76ff03;
+      --easa-dim:  rgba(118,255,3,0.10);
+      --easa-glow: 0 0 30px rgba(118,255,3,0.18);
+      --portal:    #c084ff;
+    }
+
+    [data-theme="light"] {
+      --bg:        #eef2f8;
+      --bg2:       #ffffff;
+      --bg3:       #f4f7fc;
+      --bg4:       #e8eef6;
+      --border:    rgba(0,0,0,0.09);
+      --text:      #0d1117;
+      --text2:     #374151;
+      --text3:     #9ca3af;
+      --grid:      rgba(0,80,160,0.04);
+      --mvf:       #0088bb;
+      --mvf-dim:   rgba(0,136,187,0.10);
+      --mvf-glow:  0 0 30px rgba(0,136,187,0.15);
+      --easa:      #2d8a00;
+      --easa-dim:  rgba(45,138,0,0.10);
+      --easa-glow: 0 0 30px rgba(45,138,0,0.15);
+      --portal:    #8b44e0;
+    }
+
+    /* ── RESET ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    html { transition: background-color .25s, color .25s; }
+
+    body {
+      font-family: 'Exo 2', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       BARRA DE NAVEGAÇÃO (topo)
+    ══════════════════════════════════════════════════════════ */
+    .navbar {
+      height: var(--bar-h);
+      min-height: var(--bar-h);
+      background: rgba(10,13,17,0.96);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 4px;
+      z-index: 200;
+      position: relative;
+    }
+
+    /* Logo */
+    .nav-logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--text3);
+      padding: 0 10px 0 4px;
+      margin-right: 4px;
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .logo-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--portal);
+      box-shadow: 0 0 8px var(--portal);
+      animation: blink 2.5s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+
+    /* Abas */
+    .tabs {
+      display: flex;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background var(--trans), border-color var(--trans), color var(--trans);
+      white-space: nowrap;
+      color: var(--text3);
+      user-select: none;
+    }
+
+    .tab:hover {
+      background: var(--bg3);
+      color: var(--text2);
+    }
+
+    /* Indicador colorido por aba */
+    .tab-pip {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: box-shadow var(--trans);
+    }
+
+    .tab[data-app="home"]  .tab-pip { background: var(--portal); }
+    .tab[data-app="mvf"]   .tab-pip { background: var(--mvf);    }
+    .tab[data-app="easa"]  .tab-pip { background: var(--easa);   }
+
+    /* Aba ativa */
+    .tab.active[data-app="home"]  { background: rgba(192,132,255,0.10); border-color: rgba(192,132,255,0.25); color: var(--portal); }
+    .tab.active[data-app="mvf"]   { background: var(--mvf-dim);          border-color: rgba(0,212,255,0.25);   color: var(--mvf);    }
+    .tab.active[data-app="easa"]  { background: var(--easa-dim);         border-color: rgba(118,255,3,0.25);   color: var(--easa);   }
+
+    .tab.active .tab-pip { box-shadow: 0 0 7px currentColor; }
+
+    /* Ações à direita */
+    .nav-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-left: 12px;
+      border-left: 1px solid var(--border);
+    }
+
+    .icon-btn {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--trans), border-color var(--trans);
+      flex-shrink: 0;
+    }
+    .icon-btn:hover { background: var(--bg4); }
+
+    /* Botão "Abrir em nova aba" — muda cor conforme app ativo */
+    #btn-external {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      width: auto;
+      padding: 0 10px;
+      gap: 5px;
+      display: flex;
+      align-items: center;
+    }
+    #btn-external[data-app="mvf"]  { color: var(--mvf);  border-color: rgba(0,212,255,0.25); }
+    #btn-external[data-app="easa"] { color: var(--easa); border-color: rgba(118,255,3,0.25);  }
+    #btn-external[data-app="home"] { display: none; }
+
+    /* ══════════════════════════════════════════════════════════
+       ÁREA DE CONTEÚDO
+    ══════════════════════════════════════════════════════════ */
+    .content-area {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Painel genérico */
+    .panel {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--trans);
+    }
+    .panel.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* iframes */
+    .panel iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       PAINEL HOME (portal)
+    ══════════════════════════════════════════════════════════ */
+    #panel-home {
+      overflow-y: auto;
+      background: var(--bg);
+    }
+
+    /* Grid PCB fundo */
+    #panel-home::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    .home-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 56px 24px 64px;
+    }
+
+    /* Hero */
+    .hero-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--easa);
+      margin-bottom: 14px;
+    }
+
+    .hero-title {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+    .hl-mvf   { color: var(--mvf);    }
+    .hl-easa  { color: var(--easa);   }
+
+    .hero-sub {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.65;
+      max-width: 440px;
+      margin-bottom: 48px;
+    }
+
+    /* Stats */
+    .stats {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+      margin-bottom: 52px;
+    }
+    .stat { text-align: center; }
+    .stat-val {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--mvf);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-lbl {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--text3);
+      text-transform: uppercase;
+    }
+    .stat-div { width: 1px; height: 32px; background: var(--border); }
+
+    /* Cards */
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+    .app-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 26px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      cursor: pointer;
+      transition: transform var(--trans), border-color var(--trans), box-shadow var(--trans);
+      position: relative;
+      overflow: hidden;
+    }
+    .app-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      opacity: 0;
+      transition: opacity var(--trans);
+    }
+    .card-mvf  { border-color: rgba(0,212,255,0.13); }
+    .card-mvf::before  { background: radial-gradient(ellipse at top left, rgba(0,212,255,0.08), transparent 60%); }
+    .card-mvf:hover    { transform: translateY(-3px); border-color: rgba(0,212,255,0.4); box-shadow: var(--mvf-glow); }
+    .card-mvf:hover::before  { opacity: 1; }
+
+    .card-easa { border-color: rgba(118,255,3,0.10); }
+    .card-easa::before { background: radial-gradient(ellipse at top right, rgba(118,255,3,0.07), transparent 60%); }
+    .card-easa:hover   { transform: translateY(-3px); border-color: rgba(118,255,3,0.38); box-shadow: var(--easa-glow); }
+    .card-easa:hover::before { opacity: 1; }
+
+    .card-header { display: flex; align-items: flex-start; gap: 14px; position: relative; z-index: 1; }
+
+    .card-icon {
+      width: 46px; height: 46px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .card-mvf  .card-icon { background: var(--mvf-dim);  color: var(--mvf);  border: 1px solid rgba(0,212,255,0.22); }
+    .card-easa .card-icon { background: var(--easa-dim); color: var(--easa); border: 1px solid rgba(118,255,3,0.22); }
+
+    .card-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .card-mvf  .card-tag { color: var(--mvf); }
+    .card-easa .card-tag { color: var(--easa); }
+
+    .card-name {
+      font-size: 18px; font-weight: 800;
+      letter-spacing: -0.01em; line-height: 1.2; margin-bottom: 2px;
+    }
+    .card-version { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text3); }
+
+    .card-desc {
+      font-size: 13px; color: var(--text2); line-height: 1.6;
+      position: relative; z-index: 1;
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 5px; position: relative; z-index: 1; }
+    .chip {
+      font-size: 10px; font-weight: 600;
+      padding: 2px 8px; border-radius: 5px;
+      background: var(--bg3); border: 1px solid var(--border); color: var(--text2);
+    }
+    .card-mvf  .chip { border-color: rgba(0,212,255,0.15); }
+    .card-easa .chip { border-color: rgba(118,255,3,0.12); }
+
+    .card-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 16px; border-radius: 10px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
+      border: none; cursor: pointer;
+      transition: filter var(--trans);
+      position: relative; z-index: 1;
+    }
+    .card-btn:hover { filter: brightness(1.12); }
+    .card-mvf  .card-btn { background: var(--mvf-dim);  color: var(--mvf);  border: 1px solid rgba(0,212,255,0.28); }
+    .card-easa .card-btn { background: var(--easa-dim); color: var(--easa); border: 1px solid rgba(118,255,3,0.28); }
+    .card-btn .arrow { transition: transform var(--trans); }
+    .app-card:hover .card-btn .arrow { transform: translateX(4px); }
+
+    .card-bg-word {
+      position: absolute; bottom: -14px; right: -8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 80px; font-weight: 900; opacity: 0.025;
+      letter-spacing: -0.05em; pointer-events: none; line-height: 1;
+    }
+
+    /* Footer */
+    .home-footer {
+      text-align: center; padding-top: 40px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; color: var(--text3); letter-spacing: 0.06em;
+    }
+    .home-footer span { color: var(--mvf); }
+
+    /* ══ LOADING SPINNER ══ */
+    .loader {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 14px; background: var(--bg);
+      z-index: 10;
+      transition: opacity .4s;
+    }
+    .loader.hidden { opacity: 0; pointer-events: none; }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 2px solid var(--border);
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    .loader[data-app="mvf"]  .spinner { color: var(--mvf); }
+    .loader[data-app="easa"] .spinner { color: var(--easa); }
+    .loader-lbl {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px; letter-spacing: 0.1em; color: var(--text3);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ══ RESPONSIVO ══ */
+    @media (max-width: 620px) {
+      .cards { grid-template-columns: 1fr; }
+      .stats { gap: 16px; }
+      .stat-div { display: none; }
+      .tab span { display: none; }
+      .tab { padding: 6px 10px; }
+      #btn-external span { display: none; }
+      #btn-external { padding: 0 8px; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- ══ DECORAÇÃO PCB (fundo) ══════════════════════════════ -->
-<div class="pcb-symbols" aria-hidden="true">
-  <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-    <g fill="none" stroke="#00e5ff" stroke-width="2">
-      <!-- Resistor -->
-      <g transform="translate(80,80)">
-        <line x1="0" y1="0" x2="20" y2="0"/>
-        <rect x="20" y="-8" width="40" height="16" rx="2"/>
-        <line x1="60" y1="0" x2="80" y2="0"/>
-        <text x="40" y="30" text-anchor="middle" font-size="10" fill="#00e5ff">R</text>
-      </g>
-      <!-- Capacitor -->
-      <g transform="translate(300,200)">
-        <circle cx="0" cy="0" r="20"/>
-        <line x1="-20" y1="0" x2="-35" y2="0"/>
-        <line x1="20"  y1="0" x2="35"  y2="0"/>
-        <text x="0" y="40" text-anchor="middle" font-size="10" fill="#00e5ff">C</text>
-      </g>
-      <!-- Indutor -->
-      <g transform="translate(600,100)">
-        <line x1="0"  y1="0" x2="20" y2="0"/>
-        <path d="M20,-15 L20,15 M28,-12 L28,12 M36,-8 L36,8 M44,-12 L44,12 M52,-15 L52,15"/>
-        <line x1="52" y1="0" x2="72" y2="0"/>
-        <text x="36" y="35" text-anchor="middle" font-size="10" fill="#00e5ff">L</text>
-      </g>
-      <!-- Transistor NPN -->
-      <g transform="translate(900,300)">
-        <line x1="0"  y1="0"   x2="30"  y2="0"/>
-        <line x1="30" y1="-30" x2="30"  y2="30"/>
-        <line x1="30" y1="-15" x2="60"  y2="-35"/>
-        <line x1="30" y1="15"  x2="60"  y2="35"/>
-        <polygon points="50,25 60,35 45,38" fill="#00e5ff"/>
-        <text x="30" y="55" text-anchor="middle" font-size="10" fill="#00e5ff">NPN</text>
-      </g>
-      <!-- GND -->
-      <g transform="translate(500,450)">
-        <line x1="0" y1="0"  x2="0"  y2="20"/>
-        <line x1="-20" y1="20" x2="20" y2="20"/>
-        <line x1="-13" y1="28" x2="13" y2="28"/>
-        <line x1="-6"  y1="36" x2="6"  y2="36"/>
-        <text x="0" y="52" text-anchor="middle" font-size="10" fill="#00e5ff">GND</text>
-      </g>
-      <!-- Diodo -->
-      <g transform="translate(150,400)">
-        <line x1="0"  y1="0" x2="20" y2="0"/>
-        <polygon points="20,0 50,15 50,-15" fill="#00e5ff"/>
-        <line x1="50" y1="-16" x2="50" y2="16"/>
-        <line x1="50" y1="0"   x2="70" y2="0"/>
-        <text x="35" y="35" text-anchor="middle" font-size="10" fill="#00e5ff">D</text>
-      </g>
-      <!-- Op-Amp -->
-      <g transform="translate(750,500)">
-        <polygon points="0,-30 0,30 50,0" fill="none" stroke="#00e5ff" stroke-width="2"/>
-        <line x1="-20" y1="-15" x2="0"  y2="-15"/>
-        <line x1="-20" y1="15"  x2="0"  y2="15"/>
-        <line x1="50"  y1="0"   x2="70" y2="0"/>
-        <text x="-8" y="-10" font-size="8" fill="#00e5ff">+</text>
-        <text x="-8" y="20"  font-size="8" fill="#00e5ff">−</text>
-        <text x="25" y="55"  text-anchor="middle" font-size="10" fill="#00e5ff">AO</text>
-      </g>
-      <!-- VCC -->
-      <g transform="translate(1100,150)">
-        <line x1="0" y1="0"   x2="0"  y2="-30"/>
-        <line x1="-15" y1="0" x2="15" y2="0"/>
-        <line x1="-10" y1="10" x2="10" y2="10"/>
-        <line x1="-5"  y1="20" x2="5"  y2="20"/>
-        <text x="25" y="0" font-size="10" fill="#00e5ff">VCC</text>
-      </g>
-    </g>
-  </svg>
+<!-- ══════════════════════════════════════════════════════════
+     BARRA DE NAVEGAÇÃO
+══════════════════════════════════════════════════════════ -->
+<nav class="navbar">
+  <div class="nav-logo">
+    <div class="logo-dot"></div>
+    SENAI
+  </div>
+
+  <div class="tabs">
+    <!-- Aba Portal -->
+    <div class="tab active" data-app="home" onclick="switchTo('home')">
+      <div class="tab-pip"></div>
+      <span>Portal</span>
+    </div>
+
+    <!-- Aba MVF -->
+    <div class="tab" data-app="mvf" onclick="switchTo('mvf')">
+      <div class="tab-pip"></div>
+      <span>MVF</span>
+    </div>
+
+    <!-- Aba EASA -->
+    <div class="tab" data-app="easa" onclick="switchTo('easa')">
+      <div class="tab-pip"></div>
+      <span>EASA</span>
+    </div>
+  </div>
+
+  <div class="nav-actions">
+    <!-- Abrir app atual em nova aba -->
+    <button class="icon-btn" id="btn-external" data-app="home"
+            onclick="openExternal()" title="Abrir em nova aba">
+      <span>NOVA ABA</span>
+      ↗
+    </button>
+
+    <!-- Tema -->
+    <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Mudar tema">☀</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════
+     ÁREA DE CONTEÚDO
+══════════════════════════════════════════════════════════ -->
+<div class="content-area">
+
+  <!-- Painel: Portal/Home -->
+  <div class="panel visible" id="panel-home">
+    <div class="home-inner">
+      <div class="hero-label">⬡ Portal de Estudos Técnicos — SENAI</div>
+      <h1 class="hero-title">
+        Dois apps,<br>
+        <span class="hl-mvf">uma navegação</span>
+      </h1>
+      <p class="hero-sub">
+        Alterne entre os apps SENAI pelas abas acima —
+        sem precisar abrir novos links. Clique num card para acessar direto.
+      </p>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-val">13</div>
+          <div class="stat-lbl">Módulos MVF</div>
+        </div>
+        <div class="stat-div"></div>
+        <div class="stat">
+          <div class="stat-val">66+</div>
+          <div class="stat-lbl">Flashcards</div>
+        </div>
+        <div class="stat-div"></div>
+        <div class="stat">
+          <div class="stat-val">2</div>
+          <div class="stat-lbl">Apps</div>
+        </div>
+        <div class="stat-div"></div>
+        <div class="stat">
+          <div class="stat-val">0↺</div>
+          <div class="stat-lbl">Recargas</div>
+        </div>
+      </div>
+
+      <!-- Cards -->
+      <div class="cards">
+
+        <!-- MVF -->
+        <div class="app-card card-mvf" onclick="switchTo('mvf')">
+          <div class="card-header">
+            <div class="card-icon">MVF</div>
+            <div>
+              <div class="card-tag">Variáveis Físicas Industriais</div>
+              <div class="card-name">SENAI · MVF</div>
+              <div class="card-version">v5.4</div>
+            </div>
+          </div>
+          <p class="card-desc">
+            Pressão, nível, vazão e temperatura com simuladores, flashcards, quiz e calculadoras interativas.
+          </p>
+          <div class="chips">
+            <div class="chip">Pressão</div>
+            <div class="chip">Nível</div>
+            <div class="chip">Vazão</div>
+            <div class="chip">Temperatura</div>
+            <div class="chip">Bernoulli ⚡</div>
+            <div class="chip">Quiz</div>
+          </div>
+          <button class="card-btn">
+            <span>Abrir agora</span>
+            <span class="arrow">→</span>
+          </button>
+          <div class="card-bg-word">MVF</div>
+        </div>
+
+        <!-- EASA -->
+        <div class="app-card card-easa" onclick="switchTo('easa')">
+          <div class="card-header">
+            <div class="card-icon">EASA</div>
+            <div>
+              <div class="card-tag">Sistemas Elétricos e Eletrônicos</div>
+              <div class="card-name">SENAI · EASA</div>
+              <div class="card-version">v1</div>
+            </div>
+          </div>
+          <p class="card-desc">
+            Simbologia PCB, circuitos e instrumentação elétrica com interface estilo circuito impresso.
+          </p>
+          <div class="chips">
+            <div class="chip">Circuitos</div>
+            <div class="chip">Simbologia PCB</div>
+            <div class="chip">Eletrônica</div>
+            <div class="chip">Instrumentação</div>
+          </div>
+          <button class="card-btn">
+            <span>Abrir agora</span>
+            <span class="arrow">→</span>
+          </button>
+          <div class="card-bg-word">EASA</div>
+        </div>
+
+      </div>
+
+      <div class="home-footer">
+        SENAI · Portal — <span>Willian</span> · 2025
+      </div>
+    </div>
+  </div>
+
+  <!-- Painel: MVF (iframe) -->
+  <div class="panel" id="panel-mvf">
+    <div class="loader" id="loader-mvf" data-app="mvf">
+      <div class="spinner"></div>
+      <div class="loader-lbl">Carregando MVF...</div>
+    </div>
+    <iframe id="frame-mvf" title="SENAI MVF"></iframe>
+  </div>
+
+  <!-- Painel: EASA (iframe) -->
+  <div class="panel" id="panel-easa">
+    <div class="loader" id="loader-easa" data-app="easa">
+      <div class="spinner"></div>
+      <div class="loader-lbl">Carregando EASA...</div>
+    </div>
+    <iframe id="frame-easa" title="SENAI EASA"></iframe>
+  </div>
+
 </div>
 
-<!-- ══ APP ════════════════════════════════════════════════ -->
-<div class="app">
+<script>
+  /* ── URLs dos apps ───────────────────────────────────────── */
+  const APPS = {
+    mvf:  'https://willianlsz1.github.io/Senai.MVF/',
+    easa: 'https://willianlsz1.github.io/EASA/'
+  };
 
-  <!-- ── SIDEBAR ──────────────────────────────────────── -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-badge">⬡ SENAI · EASA</div>
-      <div class="logo-title">Eletrônica<br><span>Aplicada</span></div>
-      <div class="logo-sub">AUTOMAÇÃO INDUSTRIAL · v1.0</div>
-    </div>
+  /* Rastreia o que já foi carregado (lazy load) */
+  const loaded = { mvf: false, easa: false };
+  let current = 'home';
 
-    <nav>
-      <div class="nav-section">
-        <div class="nav-label">Início</div>
-        <div class="nav-item active" onclick="goTo('dashboard',this)">
-          <div class="nav-icon">⚡</div> Dashboard
-        </div>
-      </div>
+  /* ── Troca de painel ─────────────────────────────────────── */
+  function switchTo(app) {
+    if (app === current) return;
+    current = app;
 
-      <div class="nav-section">
-        <div class="nav-label">Fundamentos</div>
-        <div class="nav-item" onclick="goTo('fund-eletrica',this)">
-          <div class="nav-icon">🔌</div> Eletricidade Básica
-        </div>
-        <div class="nav-item" onclick="goTo('cc',this)">
-          <div class="nav-icon">➡️</div> Circuitos CC
-        </div>
-        <div class="nav-item" onclick="goTo('ca',this)">
-          <div class="nav-icon">〰️</div> Circuitos CA
-        </div>
-      </div>
+    /* Atualiza abas */
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.app === app);
+    });
 
-      <div class="nav-section">
-        <div class="nav-label">Componentes</div>
-        <div class="nav-item" onclick="goTo('semicond',this)">
-          <div class="nav-icon">🔵</div> Semicondutores
-        </div>
-        <div class="nav-item" onclick="goTo('transistor',this)">
-          <div class="nav-icon">📐</div> Transistores
-        </div>
-        <div class="nav-item" onclick="goTo('opto',this)">
-          <div class="nav-icon">💡</div> Optoeletrônica
-          <span class="nav-badge">NEW</span>
-        </div>
-        <div class="nav-item" onclick="goTo('retificador',this)">
-          <div class="nav-icon">🔋</div> Retificadores
-        </div>
-      </div>
+    /* Atualiza painel visível */
+    document.querySelectorAll('.panel').forEach(p => {
+      p.classList.toggle('visible', p.id === 'panel-' + app);
+    });
 
-      <div class="nav-section">
-        <div class="nav-label">Digital</div>
-        <div class="nav-item" onclick="goTo('numeracao',this)">
-          <div class="nav-icon">01</div> Sistemas Numéricos
-        </div>
-        <div class="nav-item" onclick="goTo('logica',this)">
-          <div class="nav-icon">⊕</div> Lógica Digital
-        </div>
-      </div>
+    /* Botão "nova aba" */
+    const btn = document.getElementById('btn-external');
+    btn.dataset.app = app;
+    btn.style.display = app === 'home' ? 'none' : 'flex';
 
-      <div class="nav-section">
-        <div class="nav-label">Prática</div>
-        <div class="nav-item" onclick="goTo('formulas',this)">
-          <div class="nav-icon">★</div> Fórmulas Visuais
-        </div>
-        <div class="nav-item" onclick="goTo('calc',this)">
-          <div class="nav-icon">🧮</div> Calculadora
-        </div>
-        <div class="nav-item" onclick="goTo('flashcards',this)">
-          <div class="nav-icon">🃏</div> Flashcards
-        </div>
-        <div class="nav-item" onclick="goTo('quiz',this)">
-          <div class="nav-icon">📝</div> Quiz
-        </div>
-      </div>
+    /* Lazy load do iframe (só carrega na 1ª vez) */
+    if (app !== 'home' && !loaded[app]) {
+      loaded[app] = true;
+      const frame  = document.getElementById('frame-' + app);
+      const loader = document.getElementById('loader-' + app);
 
-      <div class="nav-section">
-        <div class="nav-label">Meta</div>
-        <div class="nav-item" onclick="goTo('updates',this)">
-          <div class="nav-icon">📋</div> Atualizações
-        </div>
-      </div>
-    </nav>
-  </aside>
+      frame.onload = () => {
+        loader.classList.add('hidden');
+        /* Remove após transição */
+        setTimeout(() => loader.remove(), 500);
+      };
 
-  <!-- ── MAIN ─────────────────────────────────────────── -->
-  <main class="main">
+      frame.src = APPS[app];
+    }
+  }
 
-    <!-- Topbar -->
-    <div class="topbar">
-      <div class="topbar-left">
-        <h1 id="page-title">Dashboard <span>·</span> EASA</h1>
-        <p><span class="live-dot"></span>Eletrônica Aplicada a Sistemas de Automação</p>
-      </div>
-      <div class="topbar-right">
-        <span class="theme-label" id="theme-lbl">DARK</span>
-        <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema"></div>
-      </div>
-    </div>
+  /* ── Abrir em nova aba ───────────────────────────────────── */
+  function openExternal() {
+    if (current !== 'home') window.open(APPS[current], '_blank');
+  }
 
-    <!-- ═══════════════════════════════════════════════════
-         DASHBOARD
-    ════════════════════════════════════════════════════ -->
-    <div class="page active" id="pg-dashboard">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">📚</div>
-          <div class="stat-val">09</div>
-          <div class="stat-label">Módulos</div>
-          <div class="stat-sub">Teoria + Digital</div>
-          <div class="pcb-deco">⊕</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">📐</div>
-          <div class="stat-val">06</div>
-          <div class="stat-label">Fórmulas</div>
-          <div class="stat-sub">Ohm · Kirchhoff · RC</div>
-          <div class="pcb-deco">∿</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🃏</div>
-          <div class="stat-val">17</div>
-          <div class="stat-label">Flashcards</div>
-          <div class="stat-sub">6 categorias</div>
-          <div class="pcb-deco">◈</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">📝</div>
-          <div class="stat-val">10</div>
-          <div class="stat-label">Questões Quiz</div>
-          <div class="stat-sub">Componentes · Cálculo</div>
-          <div class="pcb-deco">≋</div>
-        </div>
-      </div>
+  /* ── Tema claro/escuro ───────────────────────────────────── */
+  (function initTheme() {
+    const saved = localStorage.getItem('senai-portal-theme');
+    if (saved === 'light') document.documentElement.dataset.theme = 'light';
+    updateThemeBtn();
+  })();
 
-      <div class="section-title">Módulos de Teoria</div>
-      <div class="modules-grid">
-        <div class="module-card" onclick="goTo('fund-eletrica',document.querySelector('[onclick*=fund]'))">
-          <div class="mod-circuit">🔌</div>
-          <div class="mod-num">MÓDULO 01</div>
-          <div class="mod-title">Eletricidade Básica</div>
-          <div class="mod-tags">
-            <span class="tag tag-cyan">V · I · R</span>
-            <span class="tag tag-orange">P = V·I</span>
-          </div>
-          <div class="mod-bar"><div class="mod-bar-fill" style="width:100%"></div></div>
-        </div>
-        <div class="module-card" onclick="goTo('cc',document.querySelector('[onclick*=\"\\'cc\\'\"'))">
-          <div class="mod-circuit">➡️</div>
-          <div class="mod-num">MÓDULO 02</div>
-          <div class="mod-title">Circuitos CC</div>
-          <div class="mod-tags">
-            <span class="tag tag-green">Kirchhoff</span>
-            <span class="tag tag-cyan">Série · Paralelo</span>
-          </div>
-          <div class="mod-bar"><div class="mod-bar-fill" style="width:100%"></div></div>
-        </div>
-        <div class="module-card" onclick="goTo('ca',document.querySelector('[onclick*=\"\\'ca\\'\"'))">
-          <div class="mod-circuit">〰️</div>
-          <div class="mod-num">MÓDULO 03</div>
-          <div class="mod-title">Circuitos CA</div>
-          <div class="mod-tags">
-            <span class="tag tag-yellow">Impedância</span>
-            <span class="tag tag-orange">FP</span>
-          </div>
-          <div class="mod-bar"><div class="mod-bar-fill" style="width:100%"></div></div>
-        </div>
-        <div class="module-card" onclick="goTo('semicond',document.querySelector('[onclick*=semicond]'))">
-          <div class="mod-circuit">🔵</div>
-          <div class="mod-num">MÓDULO 04</div>
-          <div class="mod-title">Semicondutores & Diodo</div>
-          <div class="mod-tags">
-            <span class="tag tag-cyan">Junção PN</span>
-            <span class="tag tag-green">Zener</span>
-          </div>
-          <div class="mod-bar"><div class="mod-bar-fill" style="width:100%"></div></div>
-        </div>
-        <div class="module-card" onclick="goTo('transistor',document.querySelector('[onclick*=transistor]'))">
-          <div class="mod-circuit">📐</div>
-          <div class="mod-num">MÓDULO 05</div>
-          <div class="mod-title">Transistores BJT / FET</div>
-          <div class="mod-tags">
-            <span class="tag tag-orange">NPN · PNP</span>
-            <span class="tag tag-cyan">Chave · Amp</span>
-          </div>
-          <div class="mod-bar"><div class="mod-bar-fill" style="width:100%"></div></div>
-        </div>
-        <div class="module-card" onclick="goTo('logica',document.querySelector('[onclick*=logica]'))">
-          <div class="mod-circuit">⊕</div>
-          <div class="mod-num">MÓDULO 06</div>
-          <div class="mod-title">Lógica Digital</div>
-          <div class="mod-tags">
-            <span class="tag tag-green">AND · OR · NOT</span>
-            <span class="tag tag-yellow">Flip-Flop</span>
-          </div>
-          <div class="mod-bar"><div class="mod-bar-fill" style="width:100%"></div></div>
-        </div>
-      </div>
+  function toggleTheme() {
+    const isLight = document.documentElement.dataset.theme === 'light';
+    document.documentElement.dataset.theme = isLight ? 'dark' : 'light';
+    localStorage.setItem('senai-portal-theme', isLight ? 'dark' : 'light');
+    updateThemeBtn();
+  }
 
-      <div class="section-title">Acesso Rápido</div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
-        <div class="module-card" onclick="goTo('formulas',document.querySelector('[onclick*=formulas]'))" style="text-align:center;padding:16px">
-          <div style="font-size:28px;margin-bottom:8px">★</div>
-          <div class="mod-title" style="font-size:13px">Fórmulas Visuais</div>
-        </div>
-        <div class="module-card" onclick="goTo('calc',document.querySelector('[onclick*=calc]'))" style="text-align:center;padding:16px">
-          <div style="font-size:28px;margin-bottom:8px">🧮</div>
-          <div class="mod-title" style="font-size:13px">Calculadora</div>
-        </div>
-        <div class="module-card" onclick="goTo('flashcards',document.querySelector('[onclick*=flashcards]'))" style="text-align:center;padding:16px">
-          <div style="font-size:28px;margin-bottom:8px">🃏</div>
-          <div class="mod-title" style="font-size:13px">Flashcards</div>
-        </div>
-        <div class="module-card" onclick="goTo('quiz',document.querySelector('[onclick*=quiz]'))" style="text-align:center;padding:16px">
-          <div style="font-size:28px;margin-bottom:8px">📝</div>
-          <div class="mod-title" style="font-size:13px">Quiz</div>
-        </div>
-      </div>
-    </div>
+  function updateThemeBtn() {
+    const btn = document.getElementById('theme-btn');
+    const isLight = document.documentElement.dataset.theme === 'light';
+    btn.textContent = isLight ? '☾' : '☀';
+    btn.title = isLight ? 'Mudar para tema escuro' : 'Mudar para tema claro';
+  }
+</script>
 
-    <!-- ═══════════════════════════════════════════════════
-         MÓDULO 01 — ELETRICIDADE BÁSICA
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-fund-eletrica">
-      <div class="content-wrap">
-        <div class="theory-card">
-          <h2>Módulo 01 — <span>Eletricidade Básica</span></h2>
-          <div class="tc-sub">ELETROSTÁTICA · ELETRODINÂMICA · GRANDEZAS</div>
-          <div class="info-grid">
-            <div class="info-box">
-              <div class="ib-icon">⚡</div>
-              <div class="ib-title">Tensão (V)</div>
-              <div class="ib-text">Diferença de potencial elétrico entre dois pontos. Unidade: Volt (V). Força que "empurra" os elétrons.</div>
-            </div>
-            <div class="info-box">
-              <div class="ib-icon">➡️</div>
-              <div class="ib-title">Corrente (I)</div>
-              <div class="ib-text">Fluxo ordenado de cargas elétricas por um condutor. Unidade: Ampere (A). 1A = 1 Coulomb/segundo.</div>
-            </div>
-            <div class="info-box">
-              <div class="ib-icon">🔸</div>
-              <div class="ib-title">Resistência (R)</div>
-              <div class="ib-text">Oposição à passagem de corrente. Unidade: Ohm (Ω). Depende do material, comprimento e seção.</div>
-            </div>
-          </div>
-          <div class="diagram-wrap">
-            <svg width="500" height="120" viewBox="0 0 500 120" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-                  <path d="M0,0 L6,3 L0,6 Z" fill="#00e5ff"/>
-                </marker>
-              </defs>
-              <line x1="60" y1="30" x2="60" y2="90" stroke="#94a3b8" stroke-width="2"/>
-              <line x1="48" y1="40" x2="72" y2="40" stroke="#00e5ff" stroke-width="3"/>
-              <line x1="54" y1="55" x2="66" y2="55" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="48" y1="70" x2="72" y2="70" stroke="#00e5ff" stroke-width="3"/>
-              <text x="60" y="108" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Share Tech Mono">Bateria (V)</text>
-              <line x1="60" y1="40" x2="200" y2="40" stroke="#00e5ff" stroke-width="2" marker-end="url(#arr)"/>
-              <rect x="200" y="28" width="80" height="24" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
-              <text x="240" y="44" text-anchor="middle" font-size="12" fill="#ff6d00" font-weight="bold" font-family="Share Tech Mono">R (Ω)</text>
-              <line x1="280" y1="40" x2="430" y2="40" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="430" y1="40" x2="430" y2="70" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="430" y1="70" x2="60" y2="70" stroke="#00e5ff" stroke-width="2"/>
-              <text x="240" y="20" text-anchor="middle" font-size="11" fill="#76ff03" font-family="Share Tech Mono">I →</text>
-              <text x="155" y="35" font-size="10" fill="#94a3b8" font-family="Share Tech Mono">+ polo</text>
-              <text x="345" y="35" font-size="10" fill="#94a3b8" font-family="Share Tech Mono">− polo</text>
-            </svg>
-          </div>
-          <table class="comp-table">
-            <tr><th>Grandeza</th><th>Símbolo</th><th>Unidade</th><th>Instrumento</th><th>Analogia</th></tr>
-            <tr><td>Tensão</td>    <td style="font-family:'Share Tech Mono';color:var(--accent)">V ou U</td><td>Volt (V)</td>   <td>Voltímetro</td>   <td>Pressão da água</td></tr>
-            <tr><td>Corrente</td>  <td style="font-family:'Share Tech Mono';color:var(--accent)">I</td>     <td>Ampere (A)</td> <td>Amperímetro</td>  <td>Fluxo de água</td></tr>
-            <tr><td>Resistência</td><td style="font-family:'Share Tech Mono';color:var(--accent)">R</td>    <td>Ohm (Ω)</td>   <td>Ohmímetro</td>    <td>Diâmetro do cano</td></tr>
-            <tr><td>Potência</td>  <td style="font-family:'Share Tech Mono';color:var(--accent)">P</td>     <td>Watt (W)</td>  <td>Wattímetro</td>   <td>Vazão × pressão</td></tr>
-          </table>
-          <div class="alert-box">
-            <div class="ab-icon">⚠️</div>
-            <div class="ab-text"><strong>Erro comum:</strong> o amperímetro é ligado em <strong>série</strong> e o voltímetro em <strong>paralelo</strong>. Inverter danifica os instrumentos.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════
-         MÓDULO 02 — CIRCUITOS CC
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-cc">
-      <div class="content-wrap">
-        <div class="theory-card">
-          <h2>Módulo 02 — <span>Circuitos CC</span></h2>
-          <div class="tc-sub">OHM · KIRCHHOFF · SÉRIE · PARALELO · MISTO</div>
-          <div class="info-grid">
-            <div class="info-box">
-              <div class="ib-icon">➡️</div>
-              <div class="ib-title">Série</div>
-              <div class="ib-text">A mesma corrente passa por todos os componentes. A tensão se divide. R_total = R1 + R2 + ...</div>
-            </div>
-            <div class="info-box">
-              <div class="ib-icon">⊔</div>
-              <div class="ib-title">Paralelo</div>
-              <div class="ib-text">A mesma tensão em todos. A corrente se divide. 1/R_eq = 1/R1 + 1/R2 + ...</div>
-            </div>
-            <div class="info-box">
-              <div class="ib-icon">⊞</div>
-              <div class="ib-title">Kirchhoff</div>
-              <div class="ib-text">LCK: soma das correntes em um nó = 0. LTK: soma das tensões em uma malha = 0.</div>
-            </div>
-          </div>
-          <div class="diagram-wrap">
-            <svg width="560" height="130" viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg">
-              <text x="110" y="15" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Share Tech Mono" letter-spacing="1">SÉRIE</text>
-              <line x1="20" y1="35" x2="60" y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <rect x="60" y="22" width="50" height="26" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
-              <text x="85" y="38" text-anchor="middle" font-size="11" fill="#ff6d00" font-family="Share Tech Mono">R1</text>
-              <line x1="110" y1="35" x2="140" y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <rect x="140" y="22" width="50" height="26" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
-              <text x="165" y="38" text-anchor="middle" font-size="11" fill="#ff6d00" font-family="Share Tech Mono">R2</text>
-              <line x1="190" y1="35" x2="220" y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="220" y1="35" x2="220" y2="80" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="220" y1="80" x2="20"  y2="80" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="20"  y1="80" x2="20"  y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <text x="110" y="105" text-anchor="middle" font-size="10" fill="#76ff03" font-family="Share Tech Mono">I igual em todos · V se divide</text>
-              <text x="420" y="15" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Share Tech Mono" letter-spacing="1">PARALELO</text>
-              <line x1="300" y1="60" x2="340" y2="60" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="340" y1="35" x2="340" y2="90" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="500" y1="35" x2="500" y2="90" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="500" y1="60" x2="540" y2="60" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="340" y1="35" x2="360" y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <rect x="360" y="22" width="60" height="26" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
-              <text x="390" y="38" text-anchor="middle" font-size="11" fill="#ff6d00" font-family="Share Tech Mono">R1</text>
-              <line x1="420" y1="35" x2="500" y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="340" y1="90" x2="360" y2="90" stroke="#00e5ff" stroke-width="2"/>
-              <rect x="360" y="77" width="60" height="26" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
-              <text x="390" y="93" text-anchor="middle" font-size="11" fill="#ff6d00" font-family="Share Tech Mono">R2</text>
-              <line x1="420" y1="90" x2="500" y2="90" stroke="#00e5ff" stroke-width="2"/>
-              <text x="420" y="118" text-anchor="middle" font-size="10" fill="#76ff03" font-family="Share Tech Mono">V igual em todos · I se divide</text>
-            </svg>
-          </div>
-          <div class="alert-box">
-            <div class="ab-icon">💡</div>
-            <div class="ab-text"><strong>Na automação:</strong> LCK é usada para calcular corrente de saída de CLPs. LTK verifica quedas de tensão em cabos longos e alimentações 4–20 mA.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════
-         MÓDULO 03 — CIRCUITOS CA
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-ca">
-      <div class="content-wrap">
-        <div class="theory-card">
-          <h2>Módulo 03 — <span>Circuitos CA</span></h2>
-          <div class="tc-sub">FREQUÊNCIA · IMPEDÂNCIA · POTÊNCIA · FATOR DE POTÊNCIA</div>
-          <div class="info-grid">
-            <div class="info-box">
-              <div class="ib-icon">〰️</div>
-              <div class="ib-title">Onda Senoidal</div>
-              <div class="ib-text">v(t) = Vpico × sen(2πft). No Brasil: 60 Hz, 127V ou 220V (valores eficazes = Vpico/√2).</div>
-            </div>
-            <div class="info-box">
-              <div class="ib-icon">∠</div>
-              <div class="ib-title">Impedância (Z)</div>
-              <div class="ib-text">Oposição total em CA. Z = √(R² + X²). Inclui resistência R e reatância X (XL ou XC).</div>
-            </div>
-            <div class="info-box">
-              <div class="ib-icon">🔷</div>
-              <div class="ib-title">Fator de Potência</div>
-              <div class="ib-text">FP = cos(φ) = P/S. FP = 1 ideal (carga resistiva). FP &lt; 1 indica reatância — penalidade industrial.</div>
-            </div>
-          </div>
-          <table class="comp-table">
-            <tr><th>Tipo</th><th>Reatância</th><th>Comportamento</th><th>Defasagem I×V</th></tr>
-            <tr><td>Resistivo</td>  <td style="color:var(--text3)">—</td>                                                          <td>V e I em fase</td>  <td class="good">0°</td></tr>
-            <tr><td>Indutivo (L)</td><td style="font-family:'Share Tech Mono';color:var(--accent)">XL = 2πfL</td>                 <td>I atrasa V</td>    <td class="warn">+90°</td></tr>
-            <tr><td>Capacitivo (C)</td><td style="font-family:'Share Tech Mono';color:var(--accent)">XC = 1/(2πfC)</td>           <td>I adianta V</td>   <td class="warn">−90°</td></tr>
-            <tr><td>Misto (RLC)</td><td style="font-family:'Share Tech Mono';color:var(--accent)">Z = √(R²+(XL-XC)²)</td>        <td>Depende do circuito</td><td>0° a 90°</td></tr>
-          </table>
-          <div class="info-grid" style="margin-top:16px">
-            <div class="info-box"><div class="ib-icon">🔵</div><div class="ib-title">P — Ativa (W)</div>   <div class="ib-text">Realiza trabalho real. P = V×I×cos(φ). Cobrada na conta de energia.</div></div>
-            <div class="info-box"><div class="ib-icon">🟡</div><div class="ib-title">Q — Reativa (VAr)</div><div class="ib-text">Gerada por reatâncias. Não realiza trabalho. Sobrecarrega a rede.</div></div>
-            <div class="info-box"><div class="ib-icon">⬜</div><div class="ib-title">S — Aparente (VA)</div><div class="ib-text">S = V×I. Potência total fornecida. S² = P² + Q². Dimensiona transformadores.</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════
-         MÓDULO 04 — SEMICONDUTORES
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-semicond">
-      <div class="content-wrap">
-        <div class="theory-card">
-          <h2>Módulo 04 — <span>Semicondutores & Diodo</span></h2>
-          <div class="tc-sub">JUNÇÃO PN · POLARIZAÇÃO · TIPOS DE DIODO</div>
-          <div class="info-grid">
-            <div class="info-box"><div class="ib-icon">🔵</div><div class="ib-title">Tipo N</div><div class="ib-text">Dopagem com fósforo/arsênio. Elétrons livres como portadores majoritários.</div></div>
-            <div class="info-box"><div class="ib-icon">🔴</div><div class="ib-title">Tipo P</div><div class="ib-text">Dopagem com boro/alumínio. Lacunas (holes) como portadores majoritários.</div></div>
-            <div class="info-box"><div class="ib-icon">⚡</div><div class="ib-title">Junção PN</div><div class="ib-text">União P+N cria região de depleção. Barreira ≈ 0,7V (Si) ou 0,3V (Ge).</div></div>
-          </div>
-          <div class="diagram-wrap">
-            <svg width="500" height="110" viewBox="0 0 500 110" xmlns="http://www.w3.org/2000/svg">
-              <text x="250" y="15" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Share Tech Mono" letter-spacing="1">SÍMBOLO DO DIODO</text>
-              <line x1="60"  y1="60" x2="160" y2="60" stroke="#00e5ff" stroke-width="2"/>
-              <polygon points="160,40 160,80 210,60" fill="none" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="210" y1="40" x2="210" y2="80" stroke="#ff6d00" stroke-width="3"/>
-              <line x1="210" y1="60" x2="300" y2="60" stroke="#00e5ff" stroke-width="2"/>
-              <text x="150" y="95" text-anchor="middle" font-size="11" fill="#76ff03" font-family="Share Tech Mono">Ânodo (+)</text>
-              <text x="220" y="95" text-anchor="middle" font-size="11" fill="#ff6d00" font-family="Share Tech Mono">Cátodo (−)</text>
-              <!-- Zener -->
-              <text x="420" y="15" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Share Tech Mono" letter-spacing="1">ZENER</text>
-              <line x1="350" y1="60" x2="380" y2="60" stroke="#00e5ff" stroke-width="2"/>
-              <polygon points="380,42 380,78 420,60" fill="none" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="420" y1="38" x2="420" y2="82" stroke="#76ff03" stroke-width="3"/>
-              <line x1="420" y1="38" x2="412" y2="30" stroke="#76ff03" stroke-width="2"/>
-              <line x1="420" y1="82" x2="428" y2="90" stroke="#76ff03" stroke-width="2"/>
-              <line x1="420" y1="60" x2="460" y2="60" stroke="#00e5ff" stroke-width="2"/>
-              <text x="420" y="105" text-anchor="middle" font-size="10" fill="#76ff03" font-family="Share Tech Mono">Regulação V</text>
-            </svg>
-          </div>
-          <table class="comp-table">
-            <tr><th>Tipo</th><th>Símbolo</th><th>Aplicação em Automação</th><th>Detalhe</th></tr>
-            <tr><td>Retificador</td><td>D</td>  <td>Fontes de alimentação CC</td>          <td>1N4007 — 1A / 1000V</td></tr>
-            <tr><td>Zener</td>      <td>DZ</td> <td>Regulação de tensão</td>               <td>Conduz no breakdown reverso</td></tr>
-            <tr><td>LED</td>        <td>LED</td><td>Indicação, displays, sensores</td>      <td>Emite luz ao conduzir</td></tr>
-            <tr><td>Fotodiodo</td>  <td>PD</td> <td>Sensores de presença, encoders</td>    <td>Corrente proporcional à luz</td></tr>
-            <tr><td>Schottky</td>   <td>DS</td> <td>Alta frequência, proteção CLPs</td>    <td>Queda de tensão ≈ 0,3V</td></tr>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════
-         MÓDULO 05 — TRANSISTORES
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-transistor">
-      <div class="content-wrap">
-        <div class="theory-card">
-          <h2>Módulo 05 — <span>Transistores</span></h2>
-          <div class="tc-sub">BJT NPN/PNP · FET · CHAVE · AMPLIFICADOR</div>
-          <div class="info-grid">
-            <div class="info-box"><div class="ib-icon">📐</div><div class="ib-title">BJT — Bipolar</div>    <div class="ib-text">3 terminais: Base (B), Coletor (C), Emissor (E). Controlado por corrente de base IB. Ganho β = IC/IB.</div></div>
-            <div class="info-box"><div class="ib-icon">⚡</div><div class="ib-title">FET — Efeito de Campo</div><div class="ib-text">Terminais: Gate (G), Drain (D), Source (S). Controlado por tensão VGS. Alta impedância de entrada.</div></div>
-            <div class="info-box"><div class="ib-icon">🔧</div><div class="ib-title">MOSFET na Automação</div><div class="ib-text">Drivers de saída de CLP, inversores de frequência, controle PWM de motores e atuadores.</div></div>
-          </div>
-          <div class="diagram-wrap">
-            <svg width="520" height="130" viewBox="0 0 520 130" xmlns="http://www.w3.org/2000/svg">
-              <text x="120" y="15" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Share Tech Mono" letter-spacing="1">BJT NPN</text>
-              <line x1="20" y1="65" x2="80" y2="65" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="80" y1="30" x2="80" y2="100" stroke="#00e5ff" stroke-width="3"/>
-              <line x1="80" y1="50" x2="140" y2="25" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="80" y1="80" x2="140" y2="105" stroke="#00e5ff" stroke-width="2"/>
-              <polygon points="128,98 140,105 133,93" fill="#00e5ff"/>
-              <line x1="140" y1="25" x2="140" y2="10" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="140" y1="105" x2="140" y2="120" stroke="#00e5ff" stroke-width="2"/>
-              <text x="20" y="62" font-size="11" fill="#76ff03" font-family="Share Tech Mono">B</text>
-              <text x="148" y="20" font-size="11" fill="#ff6d00" font-family="Share Tech Mono">C</text>
-              <text x="148" y="115" font-size="11" fill="#94a3b8" font-family="Share Tech Mono">E</text>
-              <circle cx="110" cy="65" r="35" fill="none" stroke="#64748b" stroke-width="1" stroke-dasharray="4,3"/>
-              <text x="120" y="125" text-anchor="middle" font-size="10" fill="#ff6d00" font-family="Share Tech Mono">β = IC / IB</text>
-              <!-- Como chave -->
-              <text x="320" y="15" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Share Tech Mono" letter-spacing="1">COMO CHAVE</text>
-              <line x1="280" y1="65" x2="310" y2="65" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="310" y1="40" x2="310" y2="90" stroke="#00e5ff" stroke-width="3"/>
-              <line x1="310" y1="52" x2="350" y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="310" y1="78" x2="350" y2="95" stroke="#00e5ff" stroke-width="2"/>
-              <polygon points="340,88 350,95 343,82" fill="#00e5ff"/>
-              <rect x="335" y="5" width="30" height="20" rx="3" fill="none" stroke="#ff6d00" stroke-width="2"/>
-              <text x="350" y="19" text-anchor="middle" font-size="9" fill="#ff6d00" font-family="Share Tech Mono">Carga</text>
-              <line x1="350" y1="5" x2="350" y2="-3" stroke="#00e5ff" stroke-width="2"/>
-              <text x="356" y="-1" font-size="9" fill="#76ff03" font-family="Share Tech Mono">VCC</text>
-              <line x1="350" y1="25" x2="350" y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="350" y1="95" x2="350" y2="115" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="338" y1="115" x2="362" y2="115" stroke="#94a3b8" stroke-width="2"/>
-              <line x1="342" y1="120" x2="358" y2="120" stroke="#94a3b8" stroke-width="1.5"/>
-              <line x1="346" y1="125" x2="354" y2="125" stroke="#94a3b8" stroke-width="1"/>
-              <rect x="240" y="57" width="30" height="16" rx="3" fill="none" stroke="#ff6d00" stroke-width="1.5"/>
-              <text x="255" y="68" text-anchor="middle" font-size="9" fill="#ff6d00" font-family="Share Tech Mono">RB</text>
-              <text x="270" y="56" font-size="9" fill="#76ff03" font-family="Share Tech Mono">CLP</text>
-              <text x="370" y="68" font-size="10" fill="#ff6d00" font-family="Share Tech Mono">ON/OFF</text>
-            </svg>
-          </div>
-          <div class="alert-box">
-            <div class="ab-icon">🏭</div>
-            <div class="ab-text"><strong>Na automação:</strong> saída NPN do CLP conecta a carga ao GND quando acionado. Saída PNP conecta ao VCC. Fundamental para ligar sensores corretamente ao CLP.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════
-         MÓDULO 06 — OPTOELETRÔNICA
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-opto">
-      <div class="content-wrap">
-        <div class="theory-card">
-          <h2>Módulo 06 — <span>Optoeletrônica</span></h2>
-          <div class="tc-sub">LED · FOTODIODO · FOTOTRANSISTOR · ACOPLADOR ÓPTICO · DISPLAY</div>
-          <div class="info-grid">
-            <div class="info-box"><div class="ib-icon">💡</div><div class="ib-title">LED</div>             <div class="ib-text">Emite luz ao ser polarizado diretamente. Corrente típica 10–20 mA com resistor limitador.</div></div>
-            <div class="info-box"><div class="ib-icon">📷</div><div class="ib-title">Fotodiodo</div>       <div class="ib-text">Gera corrente proporcional à intensidade de luz. Base de encoders e sensores de posição.</div></div>
-            <div class="info-box"><div class="ib-icon">🔗</div><div class="ib-title">Acoplador Óptico</div><div class="ib-text">Isolamento galvânico entre circuito de entrada e saída. Protege CLPs de ruídos e transientes.</div></div>
-          </div>
-          <table class="comp-table">
-            <tr><th>Componente</th><th>Princípio</th><th>Aplicação em Automação</th></tr>
-            <tr><td>LED</td>            <td>Emissão de luz por corrente</td>       <td>Indicação de status, barreiras de segurança, encoders</td></tr>
-            <tr><td>Display 7-seg</td>  <td>8 LEDs em segmentos A–G+DP</td>       <td>IHM, painéis de controle, contadores</td></tr>
-            <tr><td>Fototransistor</td> <td>Luz controla corrente C–E</td>         <td>Sensores de presença reflexivos, contagem de objetos</td></tr>
-            <tr><td>Acoplador Óptico</td><td>LED + fototransistor isolados</td>    <td>Interface CLP × campo, isolamento 4–20 mA</td></tr>
-            <tr><td>Fibra Óptica</td>   <td>Reflexão total interna</td>            <td>Comunicação PROFIBUS, detecção em ambiente ruidoso</td></tr>
-          </table>
-          <div class="alert-box">
-            <div class="ab-icon">⚠️</div>
-            <div class="ab-text"><strong>Cálculo do resistor do LED:</strong> R = (VCC − VLED) / ILED. Exemplo: VCC=5V, VLED=2V, ILED=15mA → R = (5−2)/0,015 = <strong>200Ω</strong>.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════
-         MÓDULO 07 — RETIFICADORES
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-retificador">
-      <div class="content-wrap">
-        <div class="theory-card">
-          <h2>Módulo 07 — <span>Retificadores & Fontes</span></h2>
-          <div class="tc-sub">MEIA ONDA · ONDA COMPLETA · PONTE · FILTRO · ZENER</div>
-          <div class="info-grid">
-            <div class="info-box"><div class="ib-icon">↗️</div>  <div class="ib-title">Meia Onda</div>      <div class="ib-text">1 diodo. Aproveita apenas o semiciclo positivo. Fator ripple = 1,21. Simples mas ineficiente.</div></div>
-            <div class="info-box"><div class="ib-icon">↗️↗️</div><div class="ib-title">Onda Completa</div>  <div class="ib-text">2 ou 4 diodos. Aproveita os dois semiciclos. Fator ripple = 0,48. Mais eficiente.</div></div>
-            <div class="info-box"><div class="ib-icon">🔋</div>   <div class="ib-title">Filtro Capacitivo</div><div class="ib-text">Capacitor "armazena" carga entre os picos. Quanto maior C, menor o ripple. τ = R×C define descarga.</div></div>
-          </div>
-          <table class="comp-table">
-            <tr><th>Tipo</th><th>Diodos</th><th>Vdc médio</th><th>Fator Ripple</th><th>Uso</th></tr>
-            <tr><td>Meia onda</td>                 <td>1</td><td>0,318 × Vpico</td><td class="warn">1,21</td><td>Cargas pequenas</td></tr>
-            <tr><td>Onda completa (ponto neutro)</td><td>2</td><td>0,636 × Vpico</td><td>0,48</td>           <td>Trafo com tap central</td></tr>
-            <tr><td>Ponte (Bridge)</td>             <td>4</td><td>0,636 × Vpico</td><td class="good">0,48</td><td>Padrão industrial</td></tr>
-          </table>
-          <div class="alert-box">
-            <div class="ab-icon">💡</div>
-            <div class="ab-text"><strong>Na automação:</strong> fontes chaveadas (SMPS) em CLPs e transmissores 4–20 mA usam retificação em ponte + regulação eletrônica, garantindo tensão estável com variação de rede de ±20%.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════
-         MÓDULO 08 — SISTEMAS NUMÉRICOS
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-numeracao">
-      <div class="content-wrap">
-        <div class="theory-card">
-          <h2>Módulo 08 — <span>Sistemas Numéricos</span></h2>
-          <div class="tc-sub">BINÁRIO · HEXADECIMAL · BCD · COMPLEMENTO</div>
-          <div class="info-grid">
-            <div class="info-box"><div class="ib-icon">01</div>  <div class="ib-title">Binário (Base 2)</div>      <div class="ib-text">Apenas 0 e 1. Linguagem nativa dos CLPs. Bit, nibble (4 bits), byte (8 bits), word (16 bits).</div></div>
-            <div class="info-box"><div class="ib-icon">0xF</div> <div class="ib-title">Hexadecimal (Base 16)</div> <div class="ib-text">0–9 e A–F. Representação compacta: 1 hex = 4 bits. Endereços de memória e registradores de CLP.</div></div>
-            <div class="info-box"><div class="ib-icon">📟</div>  <div class="ib-title">BCD</div>                   <div class="ib-text">Binary Coded Decimal. Cada dígito decimal = 4 bits. Usado em displays de 7 segmentos industriais.</div></div>
-          </div>
-          <table class="comp-table">
-            <tr><th>Decimal</th><th>Binário</th><th>Hexadecimal</th><th>BCD</th></tr>
-            <tr><td>0</td>  <td style="font-family:'JetBrains Mono'">0000</td>      <td style="font-family:'JetBrains Mono';color:var(--accent)">0x0</td><td style="font-family:'JetBrains Mono'">0000</td></tr>
-            <tr><td>5</td>  <td style="font-family:'JetBrains Mono'">0101</td>      <td style="font-family:'JetBrains Mono';color:var(--accent)">0x5</td><td style="font-family:'JetBrains Mono'">0101</td></tr>
-            <tr><td>10</td> <td style="font-family:'JetBrains Mono'">1010</td>      <td style="font-family:'JetBrains Mono';color:var(--accent)">0xA</td><td style="font-family:'JetBrains Mono'">0001 0000</td></tr>
-            <tr><td>15</td> <td style="font-family:'JetBrains Mono'">1111</td>      <td style="font-family:'JetBrains Mono';color:var(--accent)">0xF</td><td style="font-family:'JetBrains Mono'">0001 0101</td></tr>
-            <tr><td>255</td><td style="font-family:'JetBrains Mono'">1111 1111</td> <td style="font-family:'JetBrains Mono';color:var(--accent)">0xFF</td><td style="font-family:'JetBrains Mono'">0010 0101 0101</td></tr>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════
-         MÓDULO 09 — LÓGICA DIGITAL
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-logica">
-      <div class="content-wrap">
-        <div class="theory-card">
-          <h2>Módulo 09 — <span>Lógica Digital</span></h2>
-          <div class="tc-sub">PORTAS LÓGICAS · TABELA DA VERDADE · EXPRESSÕES BOOLEANAS</div>
-          <div class="info-grid">
-            <div class="info-box"><div class="ib-icon">AND</div><div class="ib-title">Porta AND</div><div class="ib-text">Saída 1 somente se TODAS as entradas forem 1. Y = A · B.</div></div>
-            <div class="info-box"><div class="ib-icon">OR</div> <div class="ib-title">Porta OR</div> <div class="ib-text">Saída 1 se PELO MENOS UMA entrada for 1. Y = A + B.</div></div>
-            <div class="info-box"><div class="ib-icon">NOT</div><div class="ib-title">Porta NOT</div> <div class="ib-text">Inverte a entrada. Y = Ā. Saída 1 quando entrada 0 e vice-versa.</div></div>
-          </div>
-          <table class="comp-table">
-            <tr><th>A</th><th>B</th><th>AND</th><th>OR</th><th>NAND</th><th>NOR</th><th>XOR</th></tr>
-            <tr>
-              <td style="font-family:'JetBrains Mono'">0</td><td style="font-family:'JetBrains Mono'">0</td>
-              <td style="font-family:'JetBrains Mono';color:var(--danger)">0</td>
-              <td style="font-family:'JetBrains Mono';color:var(--danger)">0</td>
-              <td style="font-family:'JetBrains Mono';color:var(--accent2)">1</td>
-              <td style="font-family:'JetBrains Mono';color:var(--accent2)">1</td>
-              <td style="font-family:'JetBrains Mono';color:var(--danger)">0</td>
-            </tr>
-            <tr>
-              <td style="font-family:'JetBrains Mono'">0</td><td style="font-family:'JetBrains Mono'">1</td>
-              <td style="font-family:'JetBrains Mono';color:var(--danger)">0</td>
-              <td style="font-family:'JetBrains Mono';color:var(--accent2)">1</td>
-              <td style="font-family:'JetBrains Mono';color:var(--accent2)">1</td>
-              <td style="font-family:'JetBrains Mono';color:var(--danger)">0</td>
-              <td style="font-family:'JetBrains Mono';color:var(--accent2)">1</td>
-            </tr>
-            <tr>
-              <td style="font-family:'JetBrains Mono'">1</td><td style="font-family:'JetBrains Mono'">0</td>
-              <td style="font-family:'JetBrains Mono';color:var(--danger)">0</td>
-              <td style="font-family:'JetBrains Mono';color:var(--accent2)">1</td>
-              <td style="font-family:'JetBrains Mono';color:var(--accent2)">1</td>
-              <td style="font-family:'JetBrains Mono';color:var(--danger)">0</td>
-              <td style="font-family:'JetBrains Mono';color:var(--accent2)">1</td>
-            </tr>
-            <tr>
-              <td style="font-family:'JetBrains Mono'">1</td><td style="font-family:'JetBrains Mono'">1</td>
-              <td style="font-family:'JetBrains Mono';color:var(--accent2)">1</td>
-              <td style="font-family:'JetBrains Mono';color:var(--accent2)">1</td>
-              <td style="font-family:'JetBrains Mono';color:var(--danger)">0</td>
-              <td style="font-family:'JetBrains Mono';color:var(--danger)">0</td>
-              <td style="font-family:'JetBrains Mono';color:var(--danger)">0</td>
-            </tr>
-          </table>
-          <div class="alert-box">
-            <div class="ab-icon">🏭</div>
-            <div class="ab-text"><strong>Na automação:</strong> contato normalmente aberto (NA) = AND. Contato normalmente fechado (NF) = NOT. Bobinas em paralelo = OR. Lógica booleana é a base do ladder do CLP.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════
-         FÓRMULAS VISUAIS
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-formulas">
-      <div class="content-wrap">
-        <div class="section-title">Fórmulas Visuais — Clique nas variáveis para detalhes</div>
-        <div class="formula-grid">
-
-          <div class="formula-card">
-            <div class="fc-label">Lei de Ohm</div>
-            <div class="fc-name">Tensão, Corrente e Resistência</div>
-            <div class="formula-display">
-              <span class="f-part" onclick="showTip('ohm-v')">V</span>
-              <span class="f-op"> = </span>
-              <span class="f-part" onclick="showTip('ohm-i')">I</span>
-              <span class="f-op"> × </span>
-              <span class="f-part" onclick="showTip('ohm-r')">R</span>
-              <div class="tooltip-box" id="tip-ohm-v">V = Tensão [Volt]. Isolar: V = I × R</div>
-              <div class="tooltip-box" id="tip-ohm-i">I = Corrente [Ampere]. Isolar: I = V / R</div>
-              <div class="tooltip-box" id="tip-ohm-r">R = Resistência [Ohm Ω]. Isolar: R = V / I</div>
-            </div>
-            <table class="var-table">
-              <tr><td>V</td><td>Tensão</td>     <td>Volt (V)</td></tr>
-              <tr><td>I</td><td>Corrente</td>    <td>Ampere (A)</td></tr>
-              <tr><td>R</td><td>Resistência</td> <td>Ohm (Ω)</td></tr>
-            </table>
-          </div>
-
-          <div class="formula-card">
-            <div class="fc-label">Potência Elétrica</div>
-            <div class="fc-name">Energia por Unidade de Tempo</div>
-            <div class="formula-display">
-              <span class="f-part" onclick="showTip('p-p')">P</span>
-              <span class="f-op"> = </span>
-              <span class="f-part" onclick="showTip('p-v')">V</span>
-              <span class="f-op"> × </span>
-              <span class="f-part" onclick="showTip('p-i')">I</span>
-              <div class="tooltip-box" id="tip-p-p">P = Potência [Watt W]. Também: P = I²R = V²/R</div>
-              <div class="tooltip-box" id="tip-p-v">V = Tensão [Volt]. Isolar: V = P / I</div>
-              <div class="tooltip-box" id="tip-p-i">I = Corrente [Ampere]. Isolar: I = P / V</div>
-            </div>
-            <table class="var-table">
-              <tr><td>P</td><td>Potência</td> <td>Watt (W)</td></tr>
-              <tr><td>V</td><td>Tensão</td>   <td>Volt (V)</td></tr>
-              <tr><td>I</td><td>Corrente</td> <td>Ampere (A)</td></tr>
-            </table>
-          </div>
-
-          <div class="formula-card">
-            <div class="fc-label">Resistores em Série</div>
-            <div class="fc-name">Resistência Total</div>
-            <div class="formula-display">
-              <span class="f-part" onclick="showTip('rs-rt')">R<sub>T</sub></span>
-              <span class="f-op"> = </span>
-              <span class="f-part" onclick="showTip('rs-r1')">R<sub>1</sub></span>
-              <span class="f-op"> + </span>
-              <span class="f-part" onclick="showTip('rs-r2')">R<sub>2</sub></span>
-              <span class="f-op"> + ...</span>
-              <div class="tooltip-box" id="tip-rs-rt">RT = Resistência total equivalente [Ω]. Sempre maior que qualquer resistor individual.</div>
-              <div class="tooltip-box" id="tip-rs-r1">R1 = Primeira resistência [Ω]. A mesma corrente I passa por todos.</div>
-              <div class="tooltip-box" id="tip-rs-r2">R2 = Segunda resistência [Ω]. A tensão se divide proporcionalmente à resistência.</div>
-            </div>
-            <table class="var-table">
-              <tr><td>R<sub>T</sub></td><td>Total equivalente</td><td>Ohm (Ω)</td></tr>
-              <tr><td>I</td>            <td>Mesma em todos</td>   <td>Ampere (A)</td></tr>
-              <tr><td>V</td>            <td>Se divide</td>        <td>Volt (V)</td></tr>
-            </table>
-          </div>
-
-          <div class="formula-card">
-            <div class="fc-label">Resistores em Paralelo</div>
-            <div class="fc-name">Resistência Equivalente</div>
-            <div class="formula-display" style="font-size:16px">
-              <span class="f-part" onclick="showTip('rp-rt')">1/R<sub>eq</sub></span>
-              <span class="f-op"> = </span>
-              <span class="f-part" onclick="showTip('rp-r1')">1/R<sub>1</sub></span>
-              <span class="f-op"> + </span>
-              <span class="f-part" onclick="showTip('rp-r2')">1/R<sub>2</sub></span>
-              <div class="tooltip-box" id="tip-rp-rt">Req sempre MENOR que o menor resistor. Para 2 iguais: Req = R/2.</div>
-              <div class="tooltip-box" id="tip-rp-r1">R1 = Primeira resistência. Para 2 resistores: Req = R1×R2/(R1+R2).</div>
-              <div class="tooltip-box" id="tip-rp-r2">R2 = Segunda resistência. A mesma tensão V aparece em todos.</div>
-            </div>
-            <table class="var-table">
-              <tr><td>R<sub>eq</sub></td><td>Total equivalente</td><td>Ohm (Ω)</td></tr>
-              <tr><td>V</td>             <td>Mesma em todos</td>   <td>Volt (V)</td></tr>
-              <tr><td>I</td>             <td>Se divide</td>        <td>Ampere (A)</td></tr>
-            </table>
-          </div>
-
-          <div class="formula-card">
-            <div class="fc-label">Impedância em CA</div>
-            <div class="fc-name">Oposição Total ao Circuito CA</div>
-            <div class="formula-display" style="font-size:17px">
-              <span class="f-part" onclick="showTip('imp-z')">Z</span>
-              <span class="f-op"> = √(</span>
-              <span class="f-part" onclick="showTip('imp-r')">R²</span>
-              <span class="f-op"> + </span>
-              <span class="f-part" onclick="showTip('imp-x')">X²</span>
-              <span class="f-op">)</span>
-              <div class="tooltip-box" id="tip-imp-z">Z = Impedância total [Ω]. Z = V/I em CA.</div>
-              <div class="tooltip-box" id="tip-imp-r">R = Resistência [Ω]. Não muda com frequência.</div>
-              <div class="tooltip-box" id="tip-imp-x">X = Reatância [Ω]. XL=2πfL (indutor) ou XC=1/(2πfC) (capacitor).</div>
-            </div>
-            <table class="var-table">
-              <tr><td>Z</td><td>Impedância</td> <td>Ohm (Ω)</td></tr>
-              <tr><td>R</td><td>Resistência</td><td>Ohm (Ω)</td></tr>
-              <tr><td>X</td><td>Reatância</td>  <td>Ohm (Ω)</td></tr>
-            </table>
-          </div>
-
-          <div class="formula-card">
-            <div class="fc-label">Transistor BJT</div>
-            <div class="fc-name">Ganho de Corrente β (hFE)</div>
-            <div class="formula-display">
-              <span class="f-part" onclick="showTip('bjt-b')">β</span>
-              <span class="f-op"> = </span>
-              <span class="f-part" onclick="showTip('bjt-ic')">I<sub>C</sub></span>
-              <span class="f-op"> / </span>
-              <span class="f-part" onclick="showTip('bjt-ib')">I<sub>B</sub></span>
-              <div class="tooltip-box" id="tip-bjt-b">β (ou hFE) = ganho. Típico 50–500. Controla saturação como chave.</div>
-              <div class="tooltip-box" id="tip-bjt-ic">IC = Corrente do Coletor [A]. Corrente da carga.</div>
-              <div class="tooltip-box" id="tip-bjt-ib">IB = Corrente de Base [A]. Sinal de controle do CLP ou microcontrolador.</div>
-            </div>
-            <table class="var-table">
-              <tr><td>β</td>              <td>Ganho de corrente</td>  <td>adimensional</td></tr>
-              <tr><td>I<sub>C</sub></td>  <td>Corrente do coletor</td><td>Ampere (A)</td></tr>
-              <tr><td>I<sub>B</sub></td>  <td>Corrente de base</td>   <td>Ampere (A)</td></tr>
-            </table>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════
-         CALCULADORA
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-calc">
-      <div class="section-title">Calculadora — 6 Fórmulas</div>
-      <div class="calc-grid">
-
-        <div class="calc-card">
-          <h3>Lei de Ohm</h3>
-          <div class="cc-formula">V = I × R</div>
-          <div class="input-row"><label>Tensão V</label>    <input type="number" id="ohm-v" placeholder="Volt"/>   <span class="unit">V</span></div>
-          <div class="input-row"><label>Corrente I</label>  <input type="number" id="ohm-i" placeholder="Ampere"/> <span class="unit">A</span></div>
-          <div class="input-row"><label>Resistência R</label><input type="number" id="ohm-r" placeholder="Ohm"/>   <span class="unit">Ω</span></div>
-          <button class="calc-btn" onclick="calcOhm()">CALCULAR INCÓGNITA</button>
-          <div class="calc-result" id="res-ohm">—</div>
-        </div>
-
-        <div class="calc-card">
-          <h3>Potência Elétrica</h3>
-          <div class="cc-formula">P = V × I</div>
-          <div class="input-row"><label>Tensão V</label>   <input type="number" id="pot-v" placeholder="Volt"/>  <span class="unit">V</span></div>
-          <div class="input-row"><label>Corrente I</label> <input type="number" id="pot-i" placeholder="Ampere"/><span class="unit">A</span></div>
-          <button class="calc-btn" onclick="calcPot()">CALCULAR P</button>
-          <div class="calc-result" id="res-pot">—</div>
-        </div>
-
-        <div class="calc-card">
-          <h3>Resistores em Série</h3>
-          <div class="cc-formula">RT = R1 + R2 + R3</div>
-          <div class="input-row"><label>R1</label>       <input type="number" id="s-r1" placeholder="Ohm"/>  <span class="unit">Ω</span></div>
-          <div class="input-row"><label>R2</label>       <input type="number" id="s-r2" placeholder="Ohm"/>  <span class="unit">Ω</span></div>
-          <div class="input-row"><label>R3 (opt.)</label><input type="number" id="s-r3" placeholder="Ohm"/>  <span class="unit">Ω</span></div>
-          <button class="calc-btn" onclick="calcSerie()">CALCULAR RT</button>
-          <div class="calc-result" id="res-serie">—</div>
-        </div>
-
-        <div class="calc-card">
-          <h3>Resistores em Paralelo</h3>
-          <div class="cc-formula">1/Req = 1/R1 + 1/R2</div>
-          <div class="input-row"><label>R1</label><input type="number" id="p-r1" placeholder="Ohm"/><span class="unit">Ω</span></div>
-          <div class="input-row"><label>R2</label><input type="number" id="p-r2" placeholder="Ohm"/><span class="unit">Ω</span></div>
-          <button class="calc-btn" onclick="calcPar()">CALCULAR Req</button>
-          <div class="calc-result" id="res-par">—</div>
-        </div>
-
-        <div class="calc-card">
-          <h3>Resistor para LED</h3>
-          <div class="cc-formula">R = (VCC - VLED) / ILED</div>
-          <div class="input-row"><label>VCC</label>  <input type="number" id="led-vcc"  value="5"  placeholder="5"/>  <span class="unit">V</span></div>
-          <div class="input-row"><label>V LED</label><input type="number" id="led-vled" value="2"  placeholder="2"/>  <span class="unit">V</span></div>
-          <div class="input-row"><label>I LED</label><input type="number" id="led-i"    value="15" placeholder="15"/> <span class="unit">mA</span></div>
-          <button class="calc-btn" onclick="calcLED()">CALCULAR R</button>
-          <div class="calc-result" id="res-led">—</div>
-        </div>
-
-        <div class="calc-card">
-          <h3>Divisor de Tensão</h3>
-          <div class="cc-formula">Vout = Vin × R2 / (R1+R2)</div>
-          <div class="input-row"><label>Vin</label><input type="number" id="div-vin" placeholder="Volt"/><span class="unit">V</span></div>
-          <div class="input-row"><label>R1</label> <input type="number" id="div-r1" placeholder="Ohm"/> <span class="unit">Ω</span></div>
-          <div class="input-row"><label>R2</label> <input type="number" id="div-r2" placeholder="Ohm"/> <span class="unit">Ω</span></div>
-          <button class="calc-btn" onclick="calcDiv()">CALCULAR Vout</button>
-          <div class="calc-result" id="res-div">—</div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════
-         FLASHCARDS
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-flashcards">
-      <div class="section-title">Flashcards — Clique para revelar</div>
-      <div class="flashcard-wrap" onclick="flipCard()">
-        <div class="flashcard" id="fc-card">
-          <div class="flashcard-front">
-            <div class="fc-hint">CLIQUE PARA REVELAR</div>
-            <div class="fc-question" id="fc-q">Carregando...</div>
-          </div>
-          <div class="flashcard-back">
-            <div class="fc-hint">RESPOSTA</div>
-            <div class="fc-answer" id="fc-a">—</div>
-            <div class="fc-answer-sub" id="fc-s"></div>
-          </div>
-        </div>
-      </div>
-      <div class="fc-nav">
-        <button class="fc-btn" onclick="prevCard()">← Anterior</button>
-        <span class="fc-count" id="fc-counter">1 / 1</span>
-        <button class="fc-btn" onclick="nextCard()">Próximo →</button>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════
-         QUIZ
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-quiz">
-      <div class="section-title">Quiz — Eletrônica Aplicada</div>
-      <div class="quiz-card">
-        <div class="quiz-progress">
-          <div class="quiz-bar"><div class="quiz-bar-fill" id="qbar"></div></div>
-          <span class="quiz-counter" id="qcount">1/10</span>
-          <span class="quiz-score-live" id="qscore">✓ 0</span>
-        </div>
-        <div class="quiz-q" id="quiz-q">Carregando...</div>
-        <div class="quiz-options" id="quiz-opts"></div>
-        <div class="quiz-feedback" id="quiz-fb"></div>
-        <button class="quiz-next" id="quiz-next" onclick="nextQuestion()">Próxima →</button>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════
-         ATUALIZAÇÕES
-    ════════════════════════════════════════════════════ -->
-    <div class="page" id="pg-updates">
-      <div class="section-title">Atualizações — Histórico e Roadmap</div>
-      <div class="updates-list" id="updates-list">
-        <!-- Renderizado dinamicamente por app.js via UPDATES em data.js -->
-      </div>
-    </div>
-
-  </main>
-</div>
-
-<script src="data.js"></script>
-<script src="app.js"></script>
 </body>
 </html>
