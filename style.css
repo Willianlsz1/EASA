@@ -1121,7 +1121,58 @@ body::before {
 }
 .page.active { animation: fadeIn 0.3s ease; }
 
-/* ── 7. RESPONSIVO ──────────────────────────────────────── */
+/* ── 7. OVERFLOW DE TEXTO — GLOBAL ─────────────────────── */
+/* Evita que palavras longas quebrem o layout */
+.theory-card, .info-box, .ib-text, .ab-text,
+.update-items li, .update-title, .mod-title,
+.comp-table td, .comp-table th,
+.nav-item, .topbar-left h1, .topbar-left p,
+.fc-question, .fc-answer-sub, .quiz-q, .quiz-opt,
+.formula-display, .ftg-formula {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Tabelas: scroll horizontal em vez de quebra agressiva */
+.comp-table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.comp-table table { min-width: 480px; }
+
+/* ── 8. MENU HAMBURGUER (mobile) ────────────────────────── */
+.menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 20px;
+  color: var(--accent);
+  flex-shrink: 0;
+  transition: all var(--trans);
+  user-select: none;
+}
+.menu-btn:hover { background: var(--bg3); }
+
+/* Overlay escuro atrás da sidebar quando aberta */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 98;
+  backdrop-filter: blur(2px);
+}
+.sidebar-overlay.show { display: block; }
+
+/* ── 9. RESPONSIVO ──────────────────────────────────────── */
 @media (max-width: 1100px) {
   .modules-grid  { grid-template-columns: 1fr 1fr; }
   .formula-grid  { grid-template-columns: 1fr; }
@@ -1135,8 +1186,49 @@ body::before {
   .formula-table-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 700px) {
-  .sidebar       { display: none; }
-  .main          { padding: 24px 20px; }
-  .stats-grid    { grid-template-columns: 1fr 1fr; }
+  /* Sidebar vira overlay deslizante */
+  .sidebar {
+    position: fixed;
+    left: -290px;
+    top: 0;
+    height: 100vh;
+    z-index: 99;
+    transition: left 0.3s cubic-bezier(.4,0,.2,1);
+    width: 280px;
+    min-width: 280px;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+  }
+  .sidebar.open { left: 0; }
+
+  /* Botão hamburguer visível */
+  .menu-btn { display: flex; }
+
+  /* Topbar: mostra botão hamburguer + compacta título */
+  .topbar {
+    flex-wrap: nowrap;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .topbar-left h1 { font-size: 22px; }
+  .topbar-left p  { font-size: 12px; }
+
+  /* Main area ocupa tela toda */
+  .main {
+    padding: 20px 16px;
+    width: 100%;
+  }
+
+  /* Grids menores */
+  .stats-grid    { grid-template-columns: 1fr 1fr; gap: 12px; }
   .modules-grid  { grid-template-columns: 1fr; }
+  .formula-table-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Flashcard menor no mobile */
+  .flashcard-wrap { height: 200px; }
+
+  /* Quiz: opções em coluna */
+  .quiz-options { grid-template-columns: 1fr; }
+
+  /* Formulários da calculadora */
+  .input-row label { width: 70px; font-size: 12px; }
 }
