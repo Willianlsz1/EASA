@@ -1162,15 +1162,21 @@ body::before {
 .menu-btn:hover { background: var(--bg3); }
 
 /* Overlay escuro atrás da sidebar quando aberta */
+/* Usa opacity+pointer-events em vez de display:none para evitar bloqueio de cliques */
 .sidebar-overlay {
-  display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.55);
   z-index: 98;
-  backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;          /* invisível E não bloqueia toques */
+  transition: opacity 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
 }
-.sidebar-overlay.show { display: block; }
+.sidebar-overlay.show {
+  opacity: 1;
+  pointer-events: auto;          /* só captura toques quando visível */
+}
 
 /* ── 9. RESPONSIVO ──────────────────────────────────────── */
 @media (max-width: 1100px) {
@@ -1192,13 +1198,23 @@ body::before {
     left: -290px;
     top: 0;
     height: 100vh;
-    z-index: 99;
-    transition: left 0.3s cubic-bezier(.4,0,.2,1);
+    z-index: 100;              /* acima do overlay (98) e de tudo mais */
+    isolation: isolate;        /* cria stacking context próprio */
+    transition: left 0.28s cubic-bezier(.4,0,.2,1);
     width: 280px;
     min-width: 280px;
-    box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+    box-shadow: 4px 0 32px rgba(0,0,0,0.5);
+    overflow-y: auto;
   }
   .sidebar.open { left: 0; }
+  /* Garante que itens da sidebar são sempre clicáveis */
+  .sidebar .nav-item,
+  .sidebar .nav-section,
+  .sidebar .sidebar-logo {
+    pointer-events: auto;
+    position: relative;
+    z-index: 1;
+  }
 
   /* Botão hamburguer visível */
   .menu-btn { display: flex; }
