@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SENAI · EASA v1</title>
+  <title>SENAI · EASA v2.1</title>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -82,6 +82,9 @@
 </div>
 
 <!-- ══ APP ════════════════════════════════════════════════ -->
+<!-- Overlay para fechar sidebar no mobile -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
 <div class="app">
 
   <!-- ── SIDEBAR ──────────────────────────────────────── -->
@@ -89,7 +92,7 @@
     <div class="sidebar-logo">
       <div class="logo-badge">⬡ SENAI · EASA</div>
       <div class="logo-title">Eletrônica<br><span>Aplicada</span></div>
-      <div class="logo-sub">AUTOMAÇÃO INDUSTRIAL · v1.0</div>
+      <div class="logo-sub">AUTOMAÇÃO INDUSTRIAL · v2.1</div>
     </div>
 
     <nav>
@@ -148,6 +151,10 @@
           <div class="nav-icon">〜</div> Filtros RC
           <span class="nav-badge">NEW</span>
         </div>
+        <div class="nav-item" onclick="goTo('rcrl',this)">
+          <div class="nav-icon">⏱</div> Transientes RC/RL
+          <span class="nav-badge">v1.2</span>
+        </div>
       </div>
 
       <div class="nav-section">
@@ -157,6 +164,10 @@
         </div>
         <div class="nav-item" onclick="goTo('logica',this)">
           <div class="nav-icon">⊕</div> Lógica Digital
+        </div>
+        <div class="nav-item" onclick="goTo('conv',this)">
+          <div class="nav-icon">⇌</div> Conversores A/D · D/A
+          <span class="nav-badge">v1.3</span>
         </div>
       </div>
 
@@ -190,6 +201,7 @@
 
     <!-- Topbar -->
     <div class="topbar">
+      <div class="menu-btn" onclick="toggleSidebar()" title="Menu" id="menu-btn">☰</div>
       <div class="topbar-left">
         <h1 id="page-title">Dashboard <span>·</span> EASA</h1>
         <p><span class="live-dot"></span>Eletrônica Aplicada a Sistemas de Automação</p>
@@ -207,9 +219,9 @@
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">📚</div>
-          <div class="stat-val">09</div>
+          <div class="stat-val">13</div>
           <div class="stat-label">Módulos</div>
-          <div class="stat-sub">Teoria + Digital</div>
+          <div class="stat-sub">Teoria + Digital + Novos</div>
           <div class="pcb-deco">⊕</div>
         </div>
         <div class="stat-card">
@@ -390,57 +402,141 @@
       <div class="content-wrap">
         <div class="theory-card">
           <h2>Módulo 02 — <span>Circuitos CC</span></h2>
-          <div class="tc-sub">OHM · KIRCHHOFF · SÉRIE · PARALELO · MISTO</div>
+          <div class="tc-sub">OHM · KIRCHHOFF · SÉRIE · PARALELO · MISTO · DIVISORES</div>
+
+          <!-- Info grid principal -->
           <div class="info-grid">
             <div class="info-box">
               <div class="ib-icon">➡️</div>
-              <div class="ib-title">Série</div>
-              <div class="ib-text">A mesma corrente passa por todos os componentes. A tensão se divide. R_total = R1 + R2 + ...</div>
+              <div class="ib-title">Circuito Série</div>
+              <div class="ib-text">A mesma corrente percorre todos os componentes. A tensão se divide proporcionalmente. R_total = R1 + R2 + R3 + ...</div>
             </div>
             <div class="info-box">
               <div class="ib-icon">⊔</div>
-              <div class="ib-title">Paralelo</div>
-              <div class="ib-text">A mesma tensão em todos. A corrente se divide. 1/R_eq = 1/R1 + 1/R2 + ...</div>
+              <div class="ib-title">Circuito Paralelo</div>
+              <div class="ib-text">A mesma tensão em todos os ramos. A corrente se divide. 1/R_eq = 1/R1 + 1/R2 + ... Para dois resistores: R_eq = (R1×R2)/(R1+R2)</div>
             </div>
             <div class="info-box">
               <div class="ib-icon">⊞</div>
-              <div class="ib-title">Kirchhoff</div>
-              <div class="ib-text">LCK: soma das correntes em um nó = 0. LTK: soma das tensões em uma malha = 0.</div>
+              <div class="ib-title">Circuito Misto</div>
+              <div class="ib-text">Combinação de série e paralelo. Resolva de dentro para fora — simplifique os paralelos primeiro, depois some as resistências em série.</div>
             </div>
           </div>
+
+          <!-- Diagrama SVG série e paralelo -->
           <div class="diagram-wrap">
-            <svg width="560" height="130" viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg">
-              <text x="110" y="15" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Share Tech Mono" letter-spacing="1">SÉRIE</text>
-              <line x1="20" y1="35" x2="60" y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <rect x="60" y="22" width="50" height="26" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
-              <text x="85" y="38" text-anchor="middle" font-size="11" fill="#ff6d00" font-family="Share Tech Mono">R1</text>
-              <line x1="110" y1="35" x2="140" y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <rect x="140" y="22" width="50" height="26" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
-              <text x="165" y="38" text-anchor="middle" font-size="11" fill="#ff6d00" font-family="Share Tech Mono">R2</text>
-              <line x1="190" y1="35" x2="220" y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="220" y1="35" x2="220" y2="80" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="220" y1="80" x2="20"  y2="80" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="20"  y1="80" x2="20"  y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <text x="110" y="105" text-anchor="middle" font-size="10" fill="#76ff03" font-family="Share Tech Mono">I igual em todos · V se divide</text>
-              <text x="420" y="15" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Share Tech Mono" letter-spacing="1">PARALELO</text>
-              <line x1="300" y1="60" x2="340" y2="60" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="340" y1="35" x2="340" y2="90" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="500" y1="35" x2="500" y2="90" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="500" y1="60" x2="540" y2="60" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="340" y1="35" x2="360" y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <rect x="360" y="22" width="60" height="26" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
-              <text x="390" y="38" text-anchor="middle" font-size="11" fill="#ff6d00" font-family="Share Tech Mono">R1</text>
-              <line x1="420" y1="35" x2="500" y2="35" stroke="#00e5ff" stroke-width="2"/>
-              <line x1="340" y1="90" x2="360" y2="90" stroke="#00e5ff" stroke-width="2"/>
-              <rect x="360" y="77" width="60" height="26" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
-              <text x="390" y="93" text-anchor="middle" font-size="11" fill="#ff6d00" font-family="Share Tech Mono">R2</text>
-              <line x1="420" y1="90" x2="500" y2="90" stroke="#00e5ff" stroke-width="2"/>
-              <text x="420" y="118" text-anchor="middle" font-size="10" fill="#76ff03" font-family="Share Tech Mono">V igual em todos · I se divide</text>
+            <svg width="560" height="150" viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg">
+              <!-- SÉRIE -->
+              <text x="120" y="14" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Share Tech Mono" letter-spacing="1">SÉRIE</text>
+              <text x="120" y="140" text-anchor="middle" font-size="10" fill="#76ff03" font-family="Share Tech Mono">I igual em todos · V se divide</text>
+              <line x1="10" y1="50" x2="45" y2="50" stroke="#00e5ff" stroke-width="2"/>
+              <rect x="45" y="38" width="48" height="24" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
+              <text x="69" y="53" text-anchor="middle" font-size="11" fill="#ff6d00" font-family="Share Tech Mono">R1</text>
+              <line x1="93" y1="50" x2="118" y2="50" stroke="#00e5ff" stroke-width="2"/>
+              <rect x="118" y="38" width="48" height="24" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
+              <text x="142" y="53" text-anchor="middle" font-size="11" fill="#ff6d00" font-family="Share Tech Mono">R2</text>
+              <line x1="166" y1="50" x2="191" y2="50" stroke="#00e5ff" stroke-width="2"/>
+              <rect x="191" y="38" width="48" height="24" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
+              <text x="215" y="53" text-anchor="middle" font-size="11" fill="#ff6d00" font-family="Share Tech Mono">R3</text>
+              <line x1="239" y1="50" x2="260" y2="50" stroke="#00e5ff" stroke-width="2"/>
+              <line x1="260" y1="50" x2="260" y2="100" stroke="#00e5ff" stroke-width="2"/>
+              <line x1="260" y1="100" x2="10" y2="100" stroke="#00e5ff" stroke-width="2"/>
+              <line x1="10" y1="100" x2="10" y2="50" stroke="#00e5ff" stroke-width="2"/>
+              <!-- fonte -->
+              <circle cx="10" cy="75" r="0" fill="none"/>
+              <text x="135" y="120" text-anchor="middle" font-size="10" fill="#c084ff" font-family="Share Tech Mono">RT = R1+R2+R3</text>
+
+              <!-- PARALELO -->
+              <text x="420" y="14" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Share Tech Mono" letter-spacing="1">PARALELO</text>
+              <text x="420" y="140" text-anchor="middle" font-size="10" fill="#76ff03" font-family="Share Tech Mono">V igual em todos · I se divide</text>
+              <line x1="290" y1="70" x2="320" y2="70" stroke="#00e5ff" stroke-width="2"/>
+              <line x1="320" y1="35" x2="320" y2="105" stroke="#00e5ff" stroke-width="2"/>
+              <line x1="520" y1="35" x2="520" y2="105" stroke="#00e5ff" stroke-width="2"/>
+              <line x1="520" y1="70" x2="550" y2="70" stroke="#00e5ff" stroke-width="2"/>
+              <!-- R1 paralelo -->
+              <line x1="320" y1="35" x2="345" y2="35" stroke="#00e5ff" stroke-width="2"/>
+              <rect x="345" y="24" width="50" height="22" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
+              <text x="370" y="38" text-anchor="middle" font-size="10" fill="#ff6d00" font-family="Share Tech Mono">R1</text>
+              <line x1="395" y1="35" x2="520" y2="35" stroke="#00e5ff" stroke-width="2"/>
+              <!-- R2 paralelo -->
+              <line x1="320" y1="70" x2="345" y2="70" stroke="#00e5ff" stroke-width="2"/>
+              <rect x="345" y="59" width="50" height="22" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
+              <text x="370" y="73" text-anchor="middle" font-size="10" fill="#ff6d00" font-family="Share Tech Mono">R2</text>
+              <line x1="395" y1="70" x2="520" y2="70" stroke="#00e5ff" stroke-width="2"/>
+              <!-- R3 paralelo -->
+              <line x1="320" y1="105" x2="345" y2="105" stroke="#00e5ff" stroke-width="2"/>
+              <rect x="345" y="94" width="50" height="22" rx="4" fill="none" stroke="#ff6d00" stroke-width="2"/>
+              <text x="370" y="108" text-anchor="middle" font-size="10" fill="#ff6d00" font-family="Share Tech Mono">R3</text>
+              <line x1="395" y1="105" x2="520" y2="105" stroke="#00e5ff" stroke-width="2"/>
+              <text x="420" y="125" text-anchor="middle" font-size="10" fill="#c084ff" font-family="Share Tech Mono">1/Req = 1/R1+1/R2+1/R3</text>
             </svg>
           </div>
-          <div class="alert-box">
+
+          <!-- Divisores de tensão e corrente -->
+          <div class="info-grid" style="margin-top:8px">
+            <div class="info-box">
+              <div class="ib-title">Divisor de Tensão</div>
+              <div class="ib-text" style="font-size:13px">Vx = Vs × Rx / (R1+R2+...+Rn)<br><br>A tensão em cada resistor é proporcional ao seu valor. Resistor maior → maior queda de tensão.</div>
+            </div>
+            <div class="info-box">
+              <div class="ib-title">Divisor de Corrente</div>
+              <div class="ib-text" style="font-size:13px">Ix = I_total × R_outro / (R1+R2)<br><br>Para dois resistores em paralelo. A corrente prefere o caminho de menor resistência.</div>
+            </div>
+            <div class="info-box">
+              <div class="ib-title">Exemplo Prático</div>
+              <div class="ib-text" style="font-size:13px">V=12V, R1=4Ω, R2=8Ω em série.<br>I = 12/(4+8) = 1A<br>VR1 = 1×4 = 4V<br>VR2 = 1×8 = 8V ✓ (4+8=12V)</div>
+            </div>
+          </div>
+
+          <!-- Análise de malhas com Kirchhoff -->
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:20px;margin-top:14px">
+            <h3 style="font-size:15px;font-family:var(--font-mono);color:var(--accent);margin-bottom:14px;letter-spacing:0.06em">⚖️ KIRCHHOFF — ANÁLISE DE MALHAS</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div>
+                <div style="font-size:12px;font-weight:700;color:var(--accent2);letter-spacing:0.1em;margin-bottom:8px">1ª LEI — LCK (Nós)</div>
+                <div style="font-size:13px;color:var(--text-2);line-height:1.65">Num nó, a soma das correntes que <strong>entram</strong> é igual à soma das que <strong>saem</strong>.<br><br>ΣI_entrada = ΣI_saída<br><br>Exemplo: I₁=3A + I₂=2A entram → I₃=5A sai.</div>
+              </div>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#ff6d00;letter-spacing:0.1em;margin-bottom:8px">2ª LEI — LTK (Malhas)</div>
+                <div style="font-size:13px;color:var(--text-2);line-height:1.65">A soma algébrica das tensões em qualquer malha fechada é zero.<br><br>ΣV = 0 (sentido horário)<br><br>Exemplo: 12V − 4Ω×1A − 8Ω×1A = 0 ✓</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabela de fórmulas -->
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:14px">
+            <h3 style="font-size:14px;font-family:var(--font-mono);color:var(--accent);margin-bottom:12px;letter-spacing:0.06em">📐 FÓRMULAS ESSENCIAIS — CC</h3>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+              <div style="background:var(--bg4);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-family:var(--font-mono);font-size:15px;color:var(--accent);margin-bottom:4px">V = I × R</div>
+                <div style="font-size:11px;color:var(--text-3)">Lei de Ohm</div>
+              </div>
+              <div style="background:var(--bg4);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-family:var(--font-mono);font-size:15px;color:#76ff03;margin-bottom:4px">P = V × I</div>
+                <div style="font-size:11px;color:var(--text-3)">Potência elétrica</div>
+              </div>
+              <div style="background:var(--bg4);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-family:var(--font-mono);font-size:15px;color:#ff6d00;margin-bottom:4px">RT = R1+R2+…</div>
+                <div style="font-size:11px;color:var(--text-3)">Série</div>
+              </div>
+              <div style="background:var(--bg4);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-family:var(--font-mono);font-size:13px;color:#ff6d00;margin-bottom:4px">1/Req=1/R1+1/R2</div>
+                <div style="font-size:11px;color:var(--text-3)">Paralelo</div>
+              </div>
+              <div style="background:var(--bg4);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-family:var(--font-mono);font-size:13px;color:#c084ff;margin-bottom:4px">Vx=Vs×Rx/RT</div>
+                <div style="font-size:11px;color:var(--text-3)">Divisor de tensão</div>
+              </div>
+              <div style="background:var(--bg4);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-family:var(--font-mono);font-size:13px;color:#c084ff;margin-bottom:4px">Ix=It×Routra/RT</div>
+                <div style="font-size:11px;color:var(--text-3)">Divisor de corrente</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert-box" style="margin-top:14px">
             <div class="ab-icon">💡</div>
-            <div class="ab-text"><strong>Na automação:</strong> LCK é usada para calcular corrente de saída de CLPs. LTK verifica quedas de tensão em cabos longos e alimentações 4–20 mA.</div>
+            <div class="ab-text"><strong>Na automação:</strong> LCK calcula corrente de saída de CLPs e distribuição em barramentos. LTK verifica quedas de tensão em cabos longos e alimentações 4–20 mA industriais.</div>
           </div>
         </div>
       </div>
@@ -1084,6 +1180,223 @@
           </div>
           <div class="alert-box" style="border-left:3px solid #76ff03;background:rgba(118,255,3,0.06);padding:12px 16px;border-radius:8px;margin-top:14px;font-size:13px;color:var(--text-2)">
             <b>Exemplo:</b> R = 10 kΩ, C = 100 nF → fc = 1 / (2π × 10×10³ × 100×10⁻⁹) = <b>159 Hz</b>. No passa-baixa, sinais acima de 159 Hz são atenuados.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ pg-rcrl: Transientes RC/RL ══════════════════════════ -->
+    <div class="page" id="pg-rcrl">
+      <div class="content-wrap">
+        <div class="topbar">
+          <div class="topbar-left">
+            <h1>Transientes <span>RC &amp; RL</span></h1>
+            <p>v1.2 · CONSTANTE DE TEMPO τ · CARGA E DESCARGA</p>
+          </div>
+          <div class="topbar-right">
+            <span class="tag tag-cyan">Capacitor</span>
+            <span class="tag tag-green">Indutor</span>
+          </div>
+        </div>
+
+        <div class="theory-card">
+          <h2>Circuitos Transientes — <span>A Constante de Tempo τ</span></h2>
+          <div class="tc-sub">CARGA · DESCARGA · RC · RL · 5τ = REGIME PERMANENTE</div>
+          <p>Quando um capacitor ou indutor é conectado a uma fonte, a corrente e tensão <strong>não mudam instantaneamente</strong> — existe um período de transição chamado de <em>regime transiente</em>. A velocidade desse processo é descrita pela <strong>constante de tempo τ (tau)</strong>.</p>
+
+          <div class="info-grid">
+            <div class="info-box">
+              <div class="ib-icon">⏱</div>
+              <div class="ib-title">Constante de Tempo τ</div>
+              <div class="ib-text">É o tempo que o circuito leva para atingir ~63,2% da variação total. Após 5τ o circuito atingiu 99,3% — considera-se regime permanente estabelecido.</div>
+            </div>
+            <div class="info-box">
+              <div class="ib-icon">🔲</div>
+              <div class="ib-title">Circuito RC — τ = R × C</div>
+              <div class="ib-text">Com R em ohms e C em farads, τ é dado em segundos. O capacitor carrega/descarrega exponencialmente através do resistor.</div>
+            </div>
+            <div class="info-box">
+              <div class="ib-icon">🌀</div>
+              <div class="ib-title">Circuito RL — τ = L / R</div>
+              <div class="ib-text">Com L em henries e R em ohms. O indutor se opõe à variação de corrente — "armazena" energia no campo magnético.</div>
+            </div>
+          </div>
+
+          <h3>Equações de <span>Carga e Descarga</span></h3>
+          <div class="two-col">
+            <div class="info-box" style="border-left:3px solid var(--accent);">
+              <div class="ib-title" style="font-size:15px;margin-bottom:12px;">🔋 Circuito RC — Carga</div>
+              <div class="ib-text">
+                Tensão no capacitor:<br>
+                <code style="font-family:monospace;color:var(--accent)">v_C(t) = Vs × (1 − e^(−t/τ))</code><br><br>
+                Corrente no circuito:<br>
+                <code style="font-family:monospace;color:var(--accent)">i(t) = (Vs/R) × e^(−t/τ)</code><br><br>
+                Onde <strong>τ = R × C</strong>
+              </div>
+            </div>
+            <div class="info-box" style="border-left:3px solid var(--accent3);">
+              <div class="ib-title" style="font-size:15px;margin-bottom:12px;">💨 Circuito RC — Descarga</div>
+              <div class="ib-text">
+                Tensão no capacitor:<br>
+                <code style="font-family:monospace;color:var(--accent3)">v_C(t) = V0 × e^(−t/τ)</code><br><br>
+                Corrente (sentido inverso):<br>
+                <code style="font-family:monospace;color:var(--accent3)">i(t) = −(V0/R) × e^(−t/τ)</code><br><br>
+                V0 = tensão inicial no capacitor
+              </div>
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="info-box" style="border-left:3px solid var(--accent2);">
+              <div class="ib-title" style="font-size:15px;margin-bottom:12px;">🌀 Circuito RL — Energizando</div>
+              <div class="ib-text">
+                Corrente no indutor:<br>
+                <code style="font-family:monospace;color:var(--accent2)">i_L(t) = (Vs/R) × (1 − e^(−t/τ))</code><br><br>
+                Tensão no indutor:<br>
+                <code style="font-family:monospace;color:var(--accent2)">v_L(t) = Vs × e^(−t/τ)</code><br><br>
+                Onde <strong>τ = L / R</strong>
+              </div>
+            </div>
+            <div class="info-box" style="border-left:3px solid var(--warn);">
+              <div class="ib-title" style="font-size:15px;margin-bottom:12px;">⚠️ Circuito RL — Kickback</div>
+              <div class="ib-text">
+                Ao desligar um indutor abruptamente, a tensão pode ser muito alta — fenômeno do <strong>"inductive kickback"</strong>.<br><br>
+                Use <strong>diodo de roda-livre</strong> em paralelo com relés e solenoides para proteger o circuito de controle.
+              </div>
+            </div>
+          </div>
+
+          <h3>Tabela de <span>Progresso Temporal</span></h3>
+          <table class="comp-table">
+            <tr><th>Tempo</th><th>% da variação total</th><th>Interpretação</th></tr>
+            <tr><td>1τ</td><td class="good">63,2%</td><td>Ponto definidor da constante de tempo</td></tr>
+            <tr><td>2τ</td><td>86,5%</td><td>Maioria da transição concluída</td></tr>
+            <tr><td>3τ</td><td>95,0%</td><td>Considerado próximo do final em aplicações simples</td></tr>
+            <tr><td>4τ</td><td>98,2%</td><td>Muito próximo do valor final</td></tr>
+            <tr><td>5τ</td><td class="good">99,3%</td><td>Regime permanente estabelecido (padrão de engenharia)</td></tr>
+          </table>
+
+          <h3>Exemplo <span>Prático</span></h3>
+          <div class="info-box">
+            <div class="ib-text">
+              <strong>Dado:</strong> Circuito RC com R = 10 kΩ e C = 100 μF alimentado por Vs = 12 V.<br><br>
+              <strong>Calcular τ:</strong> τ = R × C = 10.000 × 100×10⁻⁶ = <strong>1 segundo</strong><br>
+              <strong>Em t = 1τ (1s):</strong> v_C = 12 × (1 − e⁻¹) = 12 × 0,632 = <strong>7,58 V</strong><br>
+              <strong>Em t = 5τ (5s):</strong> v_C = 12 × (1 − e⁻⁵) ≈ 12 × 0,993 = <strong>11,92 V ≈ 12 V</strong>
+            </div>
+          </div>
+
+          <div class="alert-box">
+            <div class="ab-icon">🏭</div>
+            <div class="ab-text">
+              <strong>Aplicação Industrial:</strong> Circuitos RC são usados em filtros anti-aliasing na entrada de ADCs de CLPs, em temporizadores de relés de estado sólido, em circuitos de debounce de sensores digitais e na filtragem de ripple em fontes chaveadas.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ pg-conv: Conversores A/D e D/A ══════════════════════ -->
+    <div class="page" id="pg-conv">
+      <div class="content-wrap">
+        <div class="topbar">
+          <div class="topbar-left">
+            <h1>Conversores <span>A/D &amp; D/A</span></h1>
+            <p>v1.3 · INTERFACE ANALÓGICO-DIGITAL · RESOLUÇÃO · QUANTIZAÇÃO</p>
+          </div>
+          <div class="topbar-right">
+            <span class="tag tag-cyan">ADC</span>
+            <span class="tag tag-green">DAC</span>
+          </div>
+        </div>
+
+        <div class="theory-card">
+          <h2>A Ponte entre o <span>Mundo Analógico e Digital</span></h2>
+          <div class="tc-sub">ADC · DAC · RESOLUÇÃO · FAIXA · QUANTIZAÇÃO · APLICAÇÕES</div>
+          <p>Sinais do mundo real são <strong>analógicos</strong> (temperatura, pressão, velocidade) — variam de forma contínua. Microcontroladores e CLPs operam no mundo <strong>digital</strong>. Os conversores A/D e D/A são a interface essencial entre esses dois universos.</p>
+
+          <div class="info-grid">
+            <div class="info-box">
+              <div class="ib-icon">📥</div>
+              <div class="ib-title">ADC — Analógico → Digital</div>
+              <div class="ib-text">Converte uma tensão analógica contínua em um número binário. Essencial para leitura de sensores de temperatura, pressão e corrente em microcontroladores e CLPs.</div>
+            </div>
+            <div class="info-box">
+              <div class="ib-icon">📤</div>
+              <div class="ib-title">DAC — Digital → Analógico</div>
+              <div class="ib-text">Converte um número digital em tensão analógica proporcional. Usado no controle de velocidade de motores (VFD), geração de referências e áudio digital.</div>
+            </div>
+            <div class="info-box">
+              <div class="ib-icon">🎯</div>
+              <div class="ib-title">Resolução (bits)</div>
+              <div class="ib-text">N bits → 2ᴺ níveis discretos. ADC de 10 bits: 1024 níveis. Com Vref = 5V, cada bit representa 5/1024 ≈ <strong>4,88 mV</strong>.</div>
+            </div>
+          </div>
+
+          <h3>Fórmulas <span>Essenciais</span></h3>
+          <div class="formula-table-grid">
+            <div class="ftg-cell">
+              <div class="ftg-label">Resolução (LSB)</div>
+              <div class="ftg-formula">LSB = Vref / 2ᴺ</div>
+            </div>
+            <div class="ftg-cell">
+              <div class="ftg-label">Valor digital (ADC)</div>
+              <div class="ftg-formula">D = Vin × 2ᴺ / Vref</div>
+            </div>
+            <div class="ftg-cell">
+              <div class="ftg-label">Tensão de saída (DAC)</div>
+              <div class="ftg-formula">Vout = D × Vref / 2ᴺ</div>
+            </div>
+            <div class="ftg-cell">
+              <div class="ftg-label">Teorema de Nyquist</div>
+              <div class="ftg-formula">fs ≥ 2 × fmax</div>
+            </div>
+            <div class="ftg-cell">
+              <div class="ftg-label">Erro de quantização</div>
+              <div class="ftg-formula">e = ± ½ LSB</div>
+            </div>
+            <div class="ftg-cell">
+              <div class="ftg-label">Número de níveis</div>
+              <div class="ftg-formula">Níveis = 2ᴺ</div>
+            </div>
+          </div>
+
+          <h3>Tipos de <span>ADC</span> — Comparação</h3>
+          <table class="comp-table">
+            <tr><th>Tipo</th><th>Velocidade</th><th>Resolução</th><th>Aplicação Típica</th></tr>
+            <tr><td>Flash (paralelo)</td><td class="good">Muito rápida</td><td>4–8 bits</td><td>Osciloscópios digitais, radar</td></tr>
+            <tr><td>SAR (Aprox. Sucessiva)</td><td>Rápida</td><td class="good">8–16 bits</td><td>Microcontroladores (Arduino, PIC, STM32)</td></tr>
+            <tr><td>Sigma-Delta (ΔΣ)</td><td>Lenta</td><td class="good">16–24 bits</td><td>Áudio, instrumentação de precisão, pesagem</td></tr>
+            <tr><td>Dupla Rampa</td><td>Lenta</td><td>12–14 bits</td><td>Multímetros digitais</td></tr>
+            <tr><td>Pipeline</td><td class="good">Alta</td><td>12–16 bits</td><td>Câmeras digitais, comunicações</td></tr>
+          </table>
+
+          <h3>Parâmetros de <span>Qualidade</span></h3>
+          <table class="comp-table">
+            <tr><th>Parâmetro</th><th>Descrição</th><th>Impacto</th></tr>
+            <tr><td>DNL (Linearidade Diferencial)</td><td>Erro entre degraus adjacentes</td><td>Códigos ausentes ou duplos</td></tr>
+            <tr><td>INL (Linearidade Integral)</td><td>Desvio da linha ideal</td><td>Erro de precisão geral</td></tr>
+            <tr><td>ENOB (Bits Efetivos)</td><td>Resolução real levando ruído em conta</td><td>Performance real vs nominal</td></tr>
+            <tr><td>SNR (Relação Sinal/Ruído)</td><td>6,02 × N + 1,76 dB (ideal)</td><td>Qualidade do sinal convertido</td></tr>
+          </table>
+
+          <h3>Exemplo <span>Prático</span></h3>
+          <div class="info-box">
+            <div class="ib-text">
+              <strong>Arduino com ADC de 10 bits, Vref = 5V:</strong><br>
+              LSB = 5V / 2¹⁰ = 5 / 1024 ≈ <strong>4,88 mV por bit</strong><br>
+              Sensor lê Vin = 2,5V → D = 2,5 × 1024 / 5 = <strong>512</strong> (0b10_0000_0000)<br><br>
+              <strong>DAC de 8 bits para gerar 2,5V (Vref = 5V):</strong><br>
+              D = 2,5 × 256 / 5 = <strong>128</strong> → escrever 128 no registrador do DAC<br><br>
+              <strong>Frequência mínima de amostragem (Nyquist):</strong><br>
+              Sinal de áudio até 20 kHz → fs ≥ 2 × 20.000 = <strong>40 kHz</strong> (CD usa 44,1 kHz)
+            </div>
+          </div>
+
+          <div class="alert-box">
+            <div class="ab-icon">🏭</div>
+            <div class="ab-text">
+              <strong>Automação Industrial:</strong> CLPs modernos possuem módulos de I/O analógico com ADC de 12–16 bits para leitura de sensores industriais (4–20 mA, 0–10 V). O DAC é usado em variadores de frequência (VFD) para controle de velocidade de motores através de referência analógica de tensão ou corrente.
+            </div>
           </div>
         </div>
       </div>
