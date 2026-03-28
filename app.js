@@ -29,7 +29,36 @@ function goTo(pg, el) {
   const raw = PAGE_TITLES[pg] || pg;
   document.getElementById('page-title').innerHTML = raw.replace('·', '<span>·</span>');
 
+  // Scroll para o topo — funciona dentro de iframe no mobile
+  const main = document.querySelector('.main');
+  if (main) main.scrollTop = 0;
   window.scrollTo(0, 0);
+
+  // Fecha a sidebar se estiver aberta (mobile)
+  closeSidebar();
+}
+
+/* ── 1b. MENU MOBILE (hamburguer) ───────────────────────── */
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  const isOpen  = sidebar.classList.contains('open');
+
+  if (isOpen) {
+    closeSidebar();
+  } else {
+    sidebar.classList.add('open');
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden'; // evita scroll do fundo
+  }
+}
+
+function closeSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+  document.body.style.overflow = '';
 }
 
 /* ── 2. TEMA ─────────────────────────────────────────────── */
