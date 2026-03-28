@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   SENAI · EASA — data.js
+   SENAI · EASA — data.js  (v2.1)
    Dados centralizados da aplicação.
    Toda adição de conteúdo (cards, questões) acontece aqui.
 ═══════════════════════════════════════════════════════════ */
@@ -16,20 +16,22 @@ const PAGE_TITLES = {
   'retificador':  'Módulo 07 · Retificadores',
   'numeracao':    'Módulo 08 · Sistemas Numéricos',
   'logica':       'Módulo 09 · Lógica Digital',
+  'kirchhoff':    'Kirchhoff & Thévenin · Norton',
+  'tiristor':     'Tiristores · SCR · DIAC · TRIAC',
+  'amp':          'Amplificadores Operacionais · Op-Amp',
+  'filtros':      'Filtros RC Passivos',
+  'rcrl':         'Transientes RC/RL · Constante de Tempo τ',
+  'conv':         'Conversores A/D e D/A · ADC · DAC',
   'formulas':     '★ Fórmulas Visuais',
   'calc':         '🧮 Calculadora',
   'flashcards':   '🃏 Flashcards',
   'quiz':         '📝 Quiz',
   'updates':      '📋 Atualizações',
-  'kirchhoff':    'Kirchhoff & Thévenin · Norton',
-  'tiristor':     'Tiristores · SCR · DIAC · TRIAC',
-  'amp':          'Amplificadores Operacionais · Op-Amp',
-  'filtros':      'Filtros RC Passivos',
 };
 
 /* ── FLASHCARDS ──────────────────────────────────────────── */
 const FLASHCARDS = [
-  // Fundamentos
+  // ── Fundamentos ─────────────────────────────────────────
   {
     q: 'Qual é a unidade de medida da resistência elétrica?',
     a: 'Ohm (Ω)',
@@ -45,7 +47,7 @@ const FLASHCARDS = [
     a: 'Soma das tensões em uma malha = 0',
     s: 'Base para análise de malhas em circuitos CC complexos.',
   },
-  // Semicondutores
+  // ── Semicondutores ──────────────────────────────────────
   {
     q: 'Qual é a tensão de barreira do diodo de silício?',
     a: '≈ 0,7 V',
@@ -56,7 +58,7 @@ const FLASHCARDS = [
     a: 'Adição de impurezas para modificar condutividade',
     s: 'Tipo P: impurezas trivalentes (boro). Tipo N: pentavalentes (fósforo).',
   },
-  // Transistores
+  // ── Transistores ────────────────────────────────────────
   {
     q: 'O que significa β (beta) do transistor BJT?',
     a: 'Ganho de corrente: β = IC / IB',
@@ -72,7 +74,7 @@ const FLASHCARDS = [
     a: 'NPN: drena corrente (sink). PNP: fornece corrente (source).',
     s: 'NPN conecta ao GND quando ativa. PNP conecta ao VCC quando ativa.',
   },
-  // Optoeletrônica
+  // ── Optoeletrônica ──────────────────────────────────────
   {
     q: 'Qual componente realiza isolamento galvânico?',
     a: 'Acoplador óptico (optocoupler)',
@@ -83,7 +85,7 @@ const FLASHCARDS = [
     a: 'R = (VCC − VLED) / ILED',
     s: 'Exemplo: (5V − 2V) / 15mA = 200Ω. Sempre calcule para não queimar o LED!',
   },
-  // CA
+  // ── Circuitos CA ────────────────────────────────────────
   {
     q: 'O que é Fator de Potência (FP)?',
     a: 'FP = cos(φ) = P / S',
@@ -104,13 +106,13 @@ const FLASHCARDS = [
     a: 'Z = √(R² + X²) — oposição total em CA',
     s: 'Inclui resistência (R) e reatância (X). Unidade: Ohm. Z = V/I em CA.',
   },
-  // Retificadores
+  // ── Retificadores ───────────────────────────────────────
   {
     q: 'O que é Ripple em uma fonte retificada?',
     a: 'Variação residual de tensão CA após retificação',
     s: 'Fator ripple = Vripple(ef) / Vdc. Menor com filtros maiores.',
   },
-  // Digital
+  // ── Digital ─────────────────────────────────────────────
   {
     q: 'Converta 1010₂ para decimal.',
     a: '10',
@@ -122,7 +124,7 @@ const FLASHCARDS = [
     s: 'NAND = NOT(A AND B). AND(1,1) = 1 → NOT(1) = 0.',
   },
 
-  // ── Kirchhoff & Thévenin ────────────────────────────
+  // ── Kirchhoff & Thévenin ────────────────────────────────
   {
     q: 'O que diz a 1ª Lei de Kirchhoff (LCK)?',
     a: 'Soma das correntes em um nó = 0',
@@ -145,10 +147,11 @@ const FLASHCARDS = [
   },
   {
     q: 'Qual a relação entre Norton e Thévenin?',
-    a: 'In = Vth / Rth e Rn = Rth',
+    a: 'In = Vth / Rth  e  Rn = Rth',
     s: 'Os dois representam o mesmo circuito. Thévenin = série. Norton = paralelo. Rn = Rth sempre.',
   },
-  // ── Tiristores ──────────────────────────────────────
+
+  // ── Tiristores ──────────────────────────────────────────
   {
     q: 'O que é um SCR e como ele é disparado?',
     a: 'Diodo controlado — dispara com pulso positivo no gate (G) e VAK > 0',
@@ -169,7 +172,8 @@ const FLASHCARDS = [
     a: 'Corrente mínima para manter o tiristor em condução',
     s: 'Se a corrente cair abaixo de IH, o tiristor desliga automaticamente — mesmo com o gate ainda ativado.',
   },
-  // ── Amplificadores ──────────────────────────────────
+
+  // ── Amplificadores Op-Amp ───────────────────────────────
   {
     q: 'Qual o ganho do amplificador inversor?',
     a: 'Av = −Rf / Ri (negativo = sinal invertido)',
@@ -195,7 +199,8 @@ const FLASHCARDS = [
     a: 'Av = 1, Vout = Vin — isola impedâncias sem amplificar',
     s: 'Saída conectada diretamente à entrada inversora (−). Rin = ∞, Rout ≈ 0. Protege a fonte do sinal.',
   },
-  // ── Filtros ─────────────────────────────────────────
+
+  // ── Filtros RC ──────────────────────────────────────────
   {
     q: 'Fórmula da frequência de corte de um filtro RC?',
     a: 'fc = 1 / (2π × R × C)',
@@ -211,10 +216,59 @@ const FLASHCARDS = [
     a: 'A tensão de saída cai para 70,7% de Vin (potência = metade)',
     s: '−3 dB = fator 0,707 = 1/√2. É o ponto de referência para definir a banda do filtro.',
   },
+
+  // ── Transientes RC/RL (v1.2) ────────────────────────────
   {
-    q: 'O que é a constante de tempo τ = R × C?',
-    a: 'Tempo para o capacitor carregar a 63,2% de Vfinal',
-    s: 'τ está ligado a fc: fc = 1/(2πτ). Em 5τ o capacitor está praticamente carregado (99,3%).',
+    q: 'O que é a constante de tempo τ de um circuito RC?',
+    a: 'τ = R × C — tempo para carregar a 63,2% do valor final',
+    s: 'Com R em Ω e C em F, τ é em segundos. Em 5τ o capacitor está 99,3% carregado.',
+  },
+  {
+    q: 'Qual a constante de tempo τ de um circuito RL?',
+    a: 'τ = L / R',
+    s: 'Com L em henries e R em ohms. Após 5τ a corrente no indutor atingiu regime permanente.',
+  },
+  {
+    q: 'Em t = 2τ, qual a porcentagem de carga do capacitor?',
+    a: '86,5%',
+    s: 'Tabela: 1τ→63,2%, 2τ→86,5%, 3τ→95%, 4τ→98,2%, 5τ→99,3%.',
+  },
+  {
+    q: 'O que é o fenômeno de "inductive kickback"?',
+    a: 'Tensão elevada ao desligar um indutor abruptamente',
+    s: 'O campo magnético colapsando gera tensão alta. Solução: diodo de roda-livre em paralelo com a carga indutiva.',
+  },
+  {
+    q: 'Equação da tensão no capacitor durante a carga RC:',
+    a: 'v_C(t) = Vs × (1 − e^(−t/τ))',
+    s: 'Exponencial crescente. Começa em 0V, tende a Vs. A corrente começa alta (Vs/R) e vai a zero.',
+  },
+
+  // ── Conversores A/D e D/A (v1.3) ────────────────────────
+  {
+    q: 'O que é a resolução de um ADC de N bits?',
+    a: 'LSB = Vref / 2ᴺ — menor tensão detectável',
+    s: 'Exemplo: 10 bits, Vref=5V → LSB = 5/1024 ≈ 4,88 mV. Mais bits = maior precisão.',
+  },
+  {
+    q: 'Qual o teorema fundamental para taxa de amostragem?',
+    a: 'Teorema de Nyquist: fs ≥ 2 × fmax',
+    s: 'A frequência de amostragem deve ser pelo menos o dobro da frequência máxima do sinal para evitar aliasing.',
+  },
+  {
+    q: 'Qual tipo de ADC é usado em microcontroladores como Arduino?',
+    a: 'SAR — Aproximação Sucessiva',
+    s: 'Boa relação velocidade/resolução (8–16 bits). Flash é mais rápido, ΔΣ tem maior resolução.',
+  },
+  {
+    q: 'Fórmula para converter tensão analógica em valor digital (ADC):',
+    a: 'D = Vin × 2ᴺ / Vref',
+    s: 'Exemplo: Arduino 10 bits, Vref=5V, Vin=2,5V → D = 2,5×1024/5 = 512.',
+  },
+  {
+    q: 'O que é o erro de quantização em um ADC?',
+    a: 'Incerteza de ± ½ LSB inerente à conversão',
+    s: 'Não pode ser eliminado — é fundamental. Um ADC de maior resolução tem erro de quantização menor.',
   },
 ];
 
@@ -281,7 +335,7 @@ const QUIZ_DATA = [
     exp: 'FP = cos(φ). Carga resistiva: defasagem φ = 0° → cos(0°) = 1. FP ideal!',
   },
 
-  // ── Kirchhoff & Thévenin ────────────────────────────
+  // ── Kirchhoff & Thévenin ────────────────────────────────
   {
     q: 'Num nó, entram I₁=4A e I₂=3A. Qual a corrente que sai?',
     opts: ['4A', '3A', '7A', '1A'],
@@ -306,7 +360,8 @@ const QUIZ_DATA = [
     ans: 1,
     exp: 'In = Vth / Rth = 10 / 5 = 2A. Rn = Rth = 5Ω. Os dois circuitos são equivalentes.',
   },
-  // ── Tiristores ──────────────────────────────────────
+
+  // ── Tiristores ──────────────────────────────────────────
   {
     q: 'Qual tiristor é bidirecional e controla corrente CA?',
     opts: ['SCR', 'DIAC', 'TRIAC', 'Diodo Zener'],
@@ -319,7 +374,8 @@ const QUIZ_DATA = [
     ans: 1,
     exp: 'Após o disparo, o gate pode ser retirado. O SCR continua ligado enquanto corrente > IH (corrente de holding).',
   },
-  // ── Amplificadores ──────────────────────────────────
+
+  // ── Amplificadores ──────────────────────────────────────
   {
     q: 'Amplificador inversor com Rf=47kΩ e Ri=4,7kΩ. Qual o ganho?',
     opts: ['10', '−10', '47', '0,1'],
@@ -338,7 +394,8 @@ const QUIZ_DATA = [
     ans: 2,
     exp: 'Comparador opera sem realimentação. A saída vai para +Vsat ou −Vsat conforme V+ > V− ou V+ < V−.',
   },
-  // ── Filtros ─────────────────────────────────────────
+
+  // ── Filtros ─────────────────────────────────────────────
   {
     q: 'R=1kΩ, C=1µF. Qual a frequência de corte fc?',
     opts: ['159 Hz', '1000 Hz', '63 Hz', '318 Hz'],
@@ -351,15 +408,74 @@ const QUIZ_DATA = [
     ans: 1,
     exp: 'HPF: C em série com a entrada, R em paralelo com a saída (para GND). Vout = Tensão em R.',
   },
+
+  // ── Transientes RC/RL (v1.2) ────────────────────────────
+  {
+    q: 'Circuito RC com R=2kΩ e C=50μF. Qual é τ?',
+    opts: ['0,1 s', '1 s', '0,01 s', '10 s'],
+    ans: 0,
+    exp: 'τ = R × C = 2000 × 50×10⁻⁶ = 0,1 s. Em 5τ (0,5s) o circuito atingiu regime permanente.',
+  },
+  {
+    q: 'Qual a equação da corrente no indutor durante energização de um circuito RL?',
+    opts: [
+      'i(t) = (Vs/R) × e^(−t/τ)',
+      'i(t) = (Vs/R) × (1 − e^(−t/τ))',
+      'i(t) = Vs × e^(−t/τ)',
+      'i(t) = (Vs/L) × t',
+    ],
+    ans: 1,
+    exp: 'A corrente começa em 0 e cresce exponencialmente até Vs/R. τ = L/R. Em 5τ: praticamente Vs/R.',
+  },
+  {
+    q: 'Em t = τ, um capacitor em carga RC atingiu qual porcentagem da tensão final?',
+    opts: ['50%', '63,2%', '86,5%', '99,3%'],
+    ans: 1,
+    exp: '63,2% é o valor da constante natural (1 − e⁻¹ ≈ 0,632). Esse é o ponto definidor de τ.',
+  },
+
+  // ── Conversores A/D e D/A (v1.3) ────────────────────────
+  {
+    q: 'ADC de 12 bits com Vref=10V. Qual a resolução (LSB)?',
+    opts: ['≈ 2,44 mV', '≈ 4,88 mV', '≈ 10 mV', '≈ 1,22 mV'],
+    ans: 0,
+    exp: 'LSB = 10V / 2¹² = 10 / 4096 ≈ 2,44 mV. Mais bits = menor LSB = mais preciso.',
+  },
+  {
+    q: 'Qual a frequência mínima de amostragem para um sinal de áudio de 20kHz?',
+    opts: ['10 kHz', '20 kHz', '40 kHz', '80 kHz'],
+    ans: 2,
+    exp: 'Teorema de Nyquist: fs ≥ 2 × fmax = 2 × 20kHz = 40kHz. CDs usam 44,1 kHz.',
+  },
+  {
+    q: 'Para gerar 1,25V com um DAC de 8 bits e Vref=5V, qual valor gravar no registrador?',
+    opts: ['64', '128', '50', '32'],
+    ans: 0,
+    exp: 'D = Vout × 2ᴺ / Vref = 1,25 × 256 / 5 = 64. Vout = 64 × 5 / 256 = 1,25V. ✓',
+  },
 ];
 
 /* ── CHANGELOG / ATUALIZAÇÕES ───────────────────────────── */
 const UPDATES = [
-  /* Versões planejadas (mais recentes no topo) */
+  /* Versão mais recente no topo */
+  {
+    version: 'v2.1',
+    title: 'Layout Global Aprimorado + RC/RL + Conversores A/D D/A',
+    date: 'Mar 2026',
+    type: 'live',
+    items: [
+      'Redesign completo do layout: tipografia maior (16px base), cards mais espaçosos, melhor uso da tela',
+      'Módulo Transientes RC/RL (v1.2): equações de carga/descarga, tabela de progresso temporal, exemplo prático',
+      'Módulo Conversores A/D e D/A (v1.3): resolução, LSB, tipos de ADC (SAR, Flash, ΔΣ), Teorema de Nyquist',
+      'CSS global reescrito: .content-wrap sem limite rígido, fonte base aumentada, espaçamentos otimizados',
+      '12 novos flashcards cobrindo RC/RL e Conversores',
+      '6 novas questões de quiz com cálculos de τ, DAC e ADC',
+    ],
+  },
   {
     version: 'v2.0',
-    title: 'Kirchhoff, Thévenin, Tiristores, Op-Amp & Filtros',
-    date: 'Atual',
+    title: 'Kirchhoff, Thévenin, Tiristores, Op-Amp & Filtros RC',
+    date: 'Mar 2025',
     type: 'live',
     items: [
       'Módulo Kirchhoff & Thévenin/Norton: LCK, LTK, cálculo de Vth/Rth, equivalente de Norton',
@@ -371,46 +487,6 @@ const UPDATES = [
     ],
   },
   {
-    version: 'v1.5',
-    title: 'Eletromagnetismo & Amplificadores Operacionais',
-    date: 'Planejado',
-    type: 'planned',
-    items: [
-      'Módulo 10 — Eletromagnetismo: campo magnético, Lei de Faraday, indutores na automação',
-      'Módulo 11 — Amplificadores Operacionais: comparador, inversor, somador, integrador',
-      'Fórmulas visuais de XL, XC e filtros passivos RC/RL',
-      'Calculadora de filtro passa-baixa e passa-alta com frequência de corte',
-      '12 novos flashcards cobrindo op-amp e eletromagnetismo',
-      '8 novas questões de quiz: circuitos RL/RC e aplicações de op-amp',
-    ],
-  },
-  {
-    version: 'v1.3',
-    title: 'Conversores A/D · D/A & Processamento de Sinais',
-    date: 'Planejado',
-    type: 'planned',
-    items: [
-      'Módulo — Conversores A/D e D/A: resolução, fundo de escala, taxa de amostragem',
-      'Relação com sinais 4–20 mA dos transmissores industriais',
-      'Cálculo de resolução de ADC (ex: ADC de 12 bits em escala 0–10V)',
-      'Novas calculadoras: resolução ADC, tensão de referência',
-    ],
-  },
-  {
-    version: 'v1.2',
-    title: 'Circuitos RC/RL — Constante de Tempo τ',
-    date: 'Em breve',
-    type: 'upcoming',
-    items: [
-      'Expansão do módulo CA com análise temporal de circuitos RC e RL',
-      'Fórmula visual interativa de τ = R×C e τ = L/R',
-      'Simulador de carga/descarga de capacitor com gráfico animado',
-      'Aplicação prática: constante de tempo em filtros de CLPs e sensores',
-      '6 novos flashcards e 4 novas questões de quiz',
-    ],
-  },
-  /* Versão atual */
-  {
     version: 'v1.0',
     title: 'Lançamento — Base Completa',
     date: 'Mar 2025',
@@ -421,7 +497,7 @@ const UPDATES = [
       '6 calculadoras: Lei de Ohm, Potência, Série, Paralelo, Resistor LED, Divisor de tensão',
       '17 flashcards com flip 3D em 6 categorias',
       '10 questões de quiz com feedback e explicação',
-      'Dark mode e Light mode com referências à estética de circuito impresso (PCB)',
+      'Dark mode e Light mode com estética de circuito impresso (PCB)',
     ],
   },
 ];
