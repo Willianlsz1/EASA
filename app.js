@@ -13,7 +13,14 @@
 ═══════════════════════════════════════════════════════════ */
 
 /* ── 1. NAVEGAÇÃO ────────────────────────────────────────── */
-function goTo(pg, el) {
+
+/**
+ * Navega para uma página.
+ * @param {string}  pg          - chave da página (ex: 'cc', 'dashboard')
+ * @param {Element} el          - elemento .nav-item que foi clicado (para marcar active)
+ * @param {boolean} pushHistory - false quando chamado pelo popstate (voltar)
+ */
+function goTo(pg, el, pushHistory = true) {
   // Esconde todas as páginas
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 
@@ -29,16 +36,38 @@ function goTo(pg, el) {
   const raw = PAGE_TITLES[pg] || pg;
   document.getElementById('page-title').innerHTML = raw.replace('·', '<span>·</span>');
 
-  // Scroll para o topo — funciona dentro de iframe no mobile
+  // Scroll para o topo (funciona dentro de iframe no mobile)
   const main = document.querySelector('.main');
   if (main) main.scrollTop = 0;
   window.scrollTo(0, 0);
 
   // Fecha a sidebar se estiver aberta (mobile)
   closeSidebar();
+
+  // Registra estado no histórico do navegador
+  // Isso faz o botão "voltar" do mobile navegar entre páginas do app
+  if (pushHistory) {
+    history.pushState({ page: pg }, '', '#' + pg);
+  }
 }
 
-/* ── 1b. MENU MOBILE (hamburguer) ───────────────────────── */
+/* ── 1b. BOTÃO VOLTAR DO MOBILE (popstate) ──────────────── */
+window.addEventListener('popstate', function (e) {
+  // Recupera a página do estado salvo (ou vai para dashboard)
+  const pg = (e.state && e.state.page) ? e.state.page : 'dashboard';
+
+  // Encontra o nav-item correspondente para marcar como active
+  const navEl = document.querySelector(
+    '.nav-item[onclick*="\'' + pg + '\'"]'
+  ) || document.querySelector(
+    '.nav-item[onclick*="\"' + pg + '\""]'
+  );
+
+  // Navega sem empurrar novo estado (evita loop)
+  goTo(pg, navEl, false);
+});
+
+/* ── 1c. MENU MOBILE (hamburguer) ───────────────────────── */
 function toggleSidebar() {
   const sidebar = document.querySelector('.sidebar');
   const overlay = document.getElementById('sidebar-overlay');
@@ -49,13 +78,14 @@ function toggleSidebar() {
   } else {
     sidebar.classList.add('open');
     overlay.classList.add('show');
-    document.body.style.overflow = 'hidden'; // evita scroll do fundo
+    document.body.style.overflow = 'hidden'; // trava scroll do fundo enquanto menu abre
   }
 }
 
 function closeSidebar() {
   const sidebar = document.querySelector('.sidebar');
   const overlay = document.getElementById('sidebar-overlay');
+  if (!sidebar || !overlay) return;
   sidebar.classList.remove('open');
   overlay.classList.remove('show');
   document.body.style.overflow = '';
@@ -296,4 +326,16 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCard(0);
   renderQuestion();
   renderUpdates();
+
+  // Suporte ao botão voltar: define o estado inicial no histórico
+  // Se vier com hash na URL (ex: #cc), abre direto naquela página
+  const hash = location.hash.replace('#', '');
+  if (hash && document.getElementById('pg-' + hash)) {
+    const navEl = document.querySelector('.nav-item[onclick*="\'' + hash + '\'"]');
+    goTo(hash, navEl, false);                          // abre a página
+    history.replaceState({ page: hash }, '', '#' + hash); // registra sem duplicar
+  } else {
+    // Página inicial = dashboard; grava no histórico para poder voltar a ele
+    history.replaceState({ page: 'dashboard' }, '', '#dashboard');
+  }
 });
